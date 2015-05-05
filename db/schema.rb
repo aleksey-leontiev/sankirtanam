@@ -11,7 +11,77 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150504154942) do
+ActiveRecord::Schema.define(version: 20150505154333) do
+
+  create_table "locations", force: true do |t|
+    t.string "name"
+    t.string "url"
+  end
+
+  create_table "people", force: true do |t|
+    t.string  "name"
+    t.integer "location_id"
+  end
+
+  add_index "people", ["location_id"], name: "index_people_on_location_id"
+
+  create_table "statistic_record_details", force: true do |t|
+    t.integer "statistic_record_id"
+    t.integer "d01"
+    t.integer "d02"
+    t.integer "d03"
+    t.integer "d04"
+    t.integer "d05"
+    t.integer "d06"
+    t.integer "d07"
+    t.integer "d08"
+    t.integer "d09"
+    t.integer "d10"
+    t.integer "d11"
+    t.integer "d12"
+    t.integer "d13"
+    t.integer "d14"
+    t.integer "d15"
+    t.integer "d16"
+    t.integer "d17"
+    t.integer "d18"
+    t.integer "d19"
+    t.integer "d20"
+    t.integer "d21"
+    t.integer "d22"
+    t.integer "d23"
+    t.integer "d24"
+    t.integer "d25"
+    t.integer "d26"
+    t.integer "d27"
+    t.integer "d28"
+    t.integer "d29"
+    t.integer "d30"
+    t.integer "d31"
+    t.integer "quantity"
+    t.decimal "scores"
+  end
+
+  add_index "statistic_record_details", ["statistic_record_id"], name: "index_statistic_record_details_on_statistic_record_id"
+
+  create_table "statistic_records", force: true do |t|
+    t.integer "statistic_report_id"
+    t.integer "person_id"
+    t.integer "huge"
+    t.integer "big"
+    t.integer "medium"
+    t.integer "small"
+  end
+
+  add_index "statistic_records", ["person_id"], name: "index_statistic_records_on_person_id"
+  add_index "statistic_records", ["statistic_report_id"], name: "index_statistic_records_on_statistic_report_id"
+
+  create_table "statistic_reports", force: true do |t|
+    t.integer "location_id"
+    t.date    "date"
+  end
+
+  add_index "statistic_reports", ["location_id"], name: "index_statistic_reports_on_location_id"
 
   create_table "users", force: true do |t|
     t.string   "email",                  default: "", null: false
