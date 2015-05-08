@@ -1,4 +1,6 @@
 class StatisticReport < ActiveRecord::Base
   belongs_to :location
-  has_many :records, :class_name => "StatisticRecord"
+  has_many :records,
+           :class_name => "StatisticRecord",
+           :dependent  => :destroy
 end
