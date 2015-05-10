@@ -1,0 +1,156 @@
+<!-- main component for a primary message -->
+<div class="jumbotron">
+  <h1>Отправить отчет</h1>
+  <p class="lead">В Санкт-Петербурге за год было распространено 999 книг.</p>
+</div>
+
+<!-- report data form -->
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">Данные отчета</h3>
+  </div>
+
+  <div class="panel-body">
+    <!-- locations component-->
+    <div class="form-group">
+      <input id="locations" class="form-control typeahead" type="text" placeholder="Локация">
+    </div>
+
+    <!-- date component -->
+    <div class="form-group">
+      <div class="input-group date">
+        <input type="text" class="form-control" placeholder="Дата">
+          <span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+      </div>
+    </div>
+
+    <!-- alerts component -->
+    <div id="alerts"></div>
+
+    <!-- report drop box component -->
+    <div class="form-group">
+      <div class='well report-drop-box' id='div' contenteditable='true'>
+        Вставьте данные из Excel сюда.
+        <span class="glyphicon glyphicon-question-sign glyphicon-help" aria-hidden="true" data-toggle="popover" data-trigger="hover" title="Как вставить данные?" data-html="true" data-content="Скопируйте таблицу из Excel, содержащую следующие колонки: имя, махабиги, биги, средние, малые. Вставьте данные в это поле."></span>
+      </div>
+    </div>
+  </div> <!-- /panel-body -->
+
+  <!-- report preview component -->
+  <div id="report">
+    <table class="table"></table>
+  </div>
+
+  <!-- report form footer-->
+  <div class="panel-footer">
+    <a href="#" class="btn btn-primary">Сохранить</a>
+  </div>
+</div>
+
+<!-- alerts -->
+<div id="incorrect-data-columns-error-alert" class="alert alert-danger alert-dismissible" role="alert" style="display:none">
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+  <strong>Некорректные данные!</strong> Вставляемая таблица должна содержать пять колонок: имя, махабиги, биги, средние, малые. Колонки с количеством книг и очков компировать не нужно - они будут подсчитаны автоматически.
+</div>
+
+<div id="incorrect-data-empty-alert" class="alert alert-danger alert-dismissible" role="alert" style="display:none">
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+  <strong>Некорректные данные!</strong> Таблица пуста или нетабличные данные.
+</div>
+
+
+<script>
+      // constructs the suggestion engine
+      var states = ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California',
+      'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii',
+      'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana',
+      'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota',
+      'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire',
+      'New Jersey', 'New Mexico', 'New York', 'North Carolina', 'North Dakota',
+      'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island',
+      'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont',
+      'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'
+      ];
+
+      var states = new Bloodhound({
+        datumTokenizer: Bloodhound.tokenizers.whitespace,
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        local: states
+      });
+
+
+
+
+      $(function () {
+        $('[data-toggle="popover"]').popover()
+
+        $('#locations').typeahead({
+          hint: true,
+          highlight: true,
+          minLength: 1
+          }, {
+          name: 'states',
+          source: states
+        });
+      });
+
+      $('.input-group.date').datepicker({
+        format: "mm/yyyy",
+        startView: 1,
+        minViewMode: 1,
+        language: "ru",
+        autoclose: true
+      });
+
+      $(document).on('paste','[contenteditable]',function(e) {
+        e.preventDefault();
+        $("#alerts").html("");
+        var text  = (e.originalEvent || e).clipboardData.getData('text/plain');
+        //var rows  = text.split("\n");
+        var table = $('<table class="table"><tr><th>Имя</th><th>Махабиги</th><th>Биги</th><th>Средние</th><th>Малые</th></tr>');
+        var data  = processData(text);
+
+        if (data == -1) {
+          $("#alerts").append($("#incorrect-data-columns-error-alert").clone().show());
+        } else if (data == -2) {
+          $("#alerts").append($("#incorrect-data-empty-alert").clone().show());
+        } else {
+          for(var datarow in data) {
+            var row = $('<tr />');
+            for (var cell in data[datarow]) {
+              row.append('<td>' + data[datarow][cell] + '</td>');
+            }
+            table.append(row);
+          }
+          $('#report').html(table);
+
+        }
+      });
+
+      function processData(rawData) {
+        var result = []
+        var rows   = rawData.split("\n");
+
+        if (rawData == "" || rows[0] == "") return -2;
+
+        for(var cell in rows) {
+          var cells = rows[cell].split("\t");
+          result.push(cells);
+
+
+          /*for (value in cells) {
+            var isNumeric = $.isNumeric(cells[value]);
+            var isEmpty   = cells[value] == "";
+            if (!isEmpty && !isNumeric && value != 0) {
+              return -3;
+            }
+          }*/
+
+          if (cells.length != 5) {
+            return -1;
+          }
+        }
+
+        return result;
+      }
+    </script>

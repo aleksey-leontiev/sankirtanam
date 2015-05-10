@@ -28,6 +28,14 @@ gem 'spring',        group: :development
 gem 'devise'
 gem 'seed-fu'
 
+gem 'bundler', '>= 1.8.4'
+
+source 'https://rails-assets.org' do
+  gem 'rails-assets-bootstrap'
+  gem 'rails-assets-bootstrap-datepicker'
+  gem 'rails-assets-typeahead.js'
+  gem 'rails-assets-typeahead.js-bootstrap3.less'
+end
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 
