@@ -1,9 +1,3 @@
-<!-- main component for a primary message -->
-<div class="jumbotron">
-  <h1>Отправить отчет</h1>
-  <p class="lead">В Санкт-Петербурге за год было распространено 999 книг.</p>
-</div>
-
 <!-- report data form -->
 <div class="panel panel-default">
   <div class="panel-heading">
@@ -16,13 +10,25 @@
       <input id="locations" class="form-control typeahead" type="text" placeholder="Локация">
     </div>
 
+    <div id="location-alerts"></div>
+
     <!-- date component -->
     <div class="form-group">
       <div class="input-group date">
-        <input type="text" class="form-control" placeholder="Дата">
+        <input id="date" type="text" class="form-control" placeholder="Дата">
           <span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
       </div>
     </div>
+
+    <div id="date-alerts"></div>
+
+    <!--
+    <div class="alert alert-success" role="alert">
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <strong>Новый отчет!</strong> На данный период отчетов нет.
+      Спасибо, что продолжаете отправлять отчеты.
+    </div>
+    -->
 
     <!-- alerts component -->
     <div id="alerts"></div>
@@ -58,99 +64,127 @@
   <strong>Некорректные данные!</strong> Таблица пуста или нетабличные данные.
 </div>
 
+<div id="new-location-alert" class="alert alert-info alert-dismissible" role="alert" style="display:none">
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+  <strong>Новая локация!</strong> Спасибо, что проявлете интерес к составлению отчетов.
+  Новая локация будет создана, Вы будете назначены её администратором.
+  В дальнейшем это поле будет заполнено автоматически. Если Вы ответственнены на несколько локаций,
+  то просто введите новое название в это поле.
+</div>
+
+<div id="access-denied-alert" class="alert alert-danger alert-dismissible" role="alert" style="display:none">
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+  <strong>Нет прав!</strong> У Вас нет прав на отправку отчетов по данной локации.
+  Если это не так свяжитесь с администратором.
+</div>
+
+<div id="report-exist-alert" class="alert alert-warning" role="alert" style="display:none">
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+  <strong>Отчет уже есть!</strong> На данный период отчет уже существует.
+  При сохранении этого отчета старый будет обновлен. Проверьте дату дважды.
+</div>
+
 
 <script>
-      // constructs the suggestion engine
-      var states = ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California',
-      'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii',
-      'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana',
-      'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota',
-      'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire',
-      'New Jersey', 'New Mexico', 'New York', 'North Carolina', 'North Dakota',
-      'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island',
-      'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont',
-      'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'
-      ];
+  var states = new Bloodhound({
+    datumTokenizer: Bloodhound.tokenizers.whitespace,
+    queryTokenizer: Bloodhound.tokenizers.whitespace,
+    prefetch: {
+      ttl: 1,
+      cache: false,
+      url: "/api/locations/index.json"
+    }
+  });
 
-      var states = new Bloodhound({
-        datumTokenizer: Bloodhound.tokenizers.whitespace,
-        queryTokenizer: Bloodhound.tokenizers.whitespace,
-        local: states
-      });
+  $(function () {
+    $('[data-toggle="popover"]').popover()
 
-
-
-
-      $(function () {
-        $('[data-toggle="popover"]').popover()
-
-        $('#locations').typeahead({
-          hint: true,
-          highlight: true,
-          minLength: 1
-          }, {
-          name: 'states',
-          source: states
-        });
-      });
-
-      $('.input-group.date').datepicker({
-        format: "mm/yyyy",
-        startView: 1,
-        minViewMode: 1,
-        language: "ru",
-        autoclose: true
-      });
-
-      $(document).on('paste','[contenteditable]',function(e) {
-        e.preventDefault();
-        $("#alerts").html("");
-        var text  = (e.originalEvent || e).clipboardData.getData('text/plain');
-        //var rows  = text.split("\n");
-        var table = $('<table class="table"><tr><th>Имя</th><th>Махабиги</th><th>Биги</th><th>Средние</th><th>Малые</th></tr>');
-        var data  = processData(text);
-
-        if (data == -1) {
-          $("#alerts").append($("#incorrect-data-columns-error-alert").clone().show());
-        } else if (data == -2) {
-          $("#alerts").append($("#incorrect-data-empty-alert").clone().show());
+    $('#locations').typeahead({
+      hint: true,
+      highlight: true,
+      minLength: 1 },
+    { name: 'states',
+      source: states
+    }).on('typeahead:change', function (obj, datum) {
+      $.get("/api/statistics/permissions/canSendReport.json", {location:datum, user:"admin"}, function(data) {
+        $("#location-alerts").html("");
+        if (data.result == true) {
+          if (data.newLocation == true) {
+            $("#location-alerts").append($("#new-location-alert").clone().show());
+          }
         } else {
-          for(var datarow in data) {
-            var row = $('<tr />');
-            for (var cell in data[datarow]) {
-              row.append('<td>' + data[datarow][cell] + '</td>');
-            }
-            table.append(row);
-          }
-          $('#report').html(table);
-
+          $("#location-alerts").append($("#access-denied-alert").clone().show());
         }
       });
+    });
 
-      function processData(rawData) {
-        var result = []
-        var rows   = rawData.split("\n");
-
-        if (rawData == "" || rows[0] == "") return -2;
-
-        for(var cell in rows) {
-          var cells = rows[cell].split("\t");
-          result.push(cells);
-
-
-          /*for (value in cells) {
-            var isNumeric = $.isNumeric(cells[value]);
-            var isEmpty   = cells[value] == "";
-            if (!isEmpty && !isNumeric && value != 0) {
-              return -3;
-            }
-          }*/
-
-          if (cells.length != 5) {
-            return -1;
-          }
+    $('.input-group.date').datepicker({
+      format: "mm/yyyy",
+      startView: 1,
+      minViewMode: 1,
+      language: "ru",
+      autoclose: true
+    }).on('changeDate', function () {
+      var value = $("#date").val();
+      var location = $("#locations").val();
+      $.get("/api/statistics/permissions/canSendReport.json", {date:value, location:location, user:"admin"}, function(data) {
+        $("#date-alerts").html("");
+        if (data.reportExist == true) {
+          $("#date-alerts").append($("#report-exist-alert").clone().show());
         }
+      });
+    });
 
-        return result;
+    $(document).on('paste','[contenteditable]',function(e) {
+      e.preventDefault();
+      $("#alerts").html("");
+      var text  = (e.originalEvent || e).clipboardData.getData('text/plain');
+      //var rows  = text.split("\n");
+      var table = $('<table class="table"><tr><th>Имя</th><th>Махабиги</th><th>Биги</th><th>Средние</th><th>Малые</th></tr>');
+      var data  = processData(text);
+
+      if (data == -1) {
+        $("#alerts").append($("#incorrect-data-columns-error-alert").clone().show());
+      } else if (data == -2) {
+        $("#alerts").append($("#incorrect-data-empty-alert").clone().show());
+      } else {
+        for(var datarow in data) {
+          var row = $('<tr />');
+          for (var cell in data[datarow]) {
+            row.append('<td>' + data[datarow][cell] + '</td>');
+          }
+          table.append(row);
+        }
+        $('#report').html(table);
+
       }
-    </script>
+    });
+
+    function processData(rawData) {
+      var result = []
+      var rows   = rawData.split("\n");
+
+      if (rawData == "" || rows[0] == "") return -2;
+
+      for(var cell in rows) {
+        var cells = rows[cell].split("\t");
+        result.push(cells);
+
+
+        /*for (value in cells) {
+          var isNumeric = $.isNumeric(cells[value]);
+          var isEmpty   = cells[value] == "";
+          if (!isEmpty && !isNumeric && value != 0) {
+            return -3;
+          }
+        }*/
+
+        if (cells.length != 5) {
+          return -1;
+        }
+      }
+
+      return result;
+    }
+  });
+</script>

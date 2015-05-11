@@ -1,4 +1,13 @@
 Rails.application.routes.draw do
+  namespace :api do
+    namespace :statistics do
+      post 'reports/new'
+      get  'permissions/canSendReport'
+    end
+
+    get 'locations/index'
+  end
+
   namespace :statistics do
     get 'reports/new'
   end
