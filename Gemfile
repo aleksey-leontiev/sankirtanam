@@ -29,6 +29,7 @@ gem 'devise'
 gem 'seed-fu'
 
 gem 'bundler', '>= 1.8.4'
+gem 'squeel'
 
 source 'https://rails-assets.org' do
   gem 'rails-assets-bootstrap'

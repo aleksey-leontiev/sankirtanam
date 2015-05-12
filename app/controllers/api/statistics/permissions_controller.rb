@@ -18,29 +18,29 @@ class Api::Statistics::PermissionsController < ApplicationController
     param_user          = params[:user]
 
     # response
-    response_result       = param_user == "admin"
+    response_result       = (param_user == "admin") # todo: check for real user
     response_new_location = false
     response_report_exist = false
 
     # check location existence
-    location = Location.find_by_name(param_location_name)
-    date     = Date.strptime(param_date, "%m/%Y") if param_date != nil
+    report_location = Location.find_by_name(param_location_name)
+    report_date     = Date.strptime(param_date, "%m/%Y") if param_date != nil
 
-    if date == nil then
-      response_new_location = (location == nil)
-    else
-      if location != nil then
-        report     = StatisticReport.find_by_location_id_and_date(location.id, date)
-        response_report_exist = (report != nil)
-      else
-        response_report_exist = false
-      end
+    # set response variables
+    if report_location != nil && report_date != nil then
+      response_report_exist = StatisticReport.where{
+        (location == report_location) &
+        (date     == report_date)}.first != nil
+    elsif report_location != nil && param_date == nil
+      response_new_location = (report_location == nil)
+    elsif report_location == nil && report_date == nil
+      response_new_location = true
     end
 
     # render json response
     render json: {
       result: response_result,
       newLocation: response_new_location,
-      reportExist: response_report_exist }
+      reportExist: response_report_exist, q: q }
   end
 end
