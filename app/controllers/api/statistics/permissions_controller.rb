@@ -41,6 +41,6 @@ class Api::Statistics::PermissionsController < ApplicationController
     render json: {
       result: response_result,
       newLocation: response_new_location,
-      reportExist: response_report_exist, q: q }
+      reportExist: response_report_exist }
   end
 end
