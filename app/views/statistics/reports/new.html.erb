@@ -1,49 +1,40 @@
-<!-- report data form -->
 <div class="panel panel-default">
   <div class="panel-heading">
     <h3 class="panel-title">Данные отчета</h3>
   </div>
 
   <div class="panel-body">
-    <!-- locations component-->
+    <!-- location component-->
     <div class="form-group">
-      <input id="locations" class="form-control typeahead" type="text" placeholder="Локация">
+      <input id="location" class="form-control typeahead" type="text" placeholder="Локация">
     </div>
-
     <div id="location-alerts"></div>
 
     <!-- date component -->
     <div class="form-group">
       <div class="input-group date">
         <input id="date" type="text" class="form-control" placeholder="Дата">
-          <span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+        <span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
       </div>
     </div>
-
     <div id="date-alerts"></div>
-
-    <!--
-    <div class="alert alert-success" role="alert">
-      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-      <strong>Новый отчет!</strong> На данный период отчетов нет.
-      Спасибо, что продолжаете отправлять отчеты.
-    </div>
-    -->
-
-    <!-- alerts component -->
-    <div id="alerts"></div>
 
     <!-- report drop box component -->
     <div class="form-group">
-      <div class='well report-drop-box' id='div' contenteditable='true'>
+      <div class='well report-drop-box' contenteditable='true'>
         Вставьте данные из Excel сюда.
-        <span class="glyphicon glyphicon-question-sign glyphicon-help" aria-hidden="true" data-toggle="popover" data-trigger="hover" title="Как вставить данные?" data-html="true" data-content="Скопируйте таблицу из Excel, содержащую следующие колонки: имя, махабиги, биги, средние, малые. Вставьте данные в это поле."></span>
+        <span class="glyphicon glyphicon-question-sign glyphicon-help"
+          aria-hidden="true" data-toggle="popover" data-trigger="hover"
+          title="Как вставить данные?" data-html="true"
+          data-content="Скопируйте таблицу из Excel, содержащую следующие колонки: имя, махабиги, биги, средние, малые. Вставьте данные в это поле.">
+        </span>
       </div>
     </div>
+    <div id="report-data-alerts"></div>
   </div> <!-- /panel-body -->
 
   <!-- report preview component -->
-  <div id="report">
+  <div id="report-preview">
     <table class="table"></table>
   </div>
 
@@ -99,7 +90,7 @@
   $(function () {
     $('[data-toggle="popover"]').popover()
 
-    $('#locations').typeahead({
+    $('#location').typeahead({
       hint: true,
       highlight: true,
       minLength: 1 },
@@ -126,7 +117,7 @@
       autoclose: true
     }).on('changeDate', function () {
       var value = $("#date").val();
-      var location = $("#locations").val();
+      var location = $("#location").val();
       $.get("/api/statistics/permissions/canSendReport.json", {date:value, location:location, user:"admin"}, function(data) {
         $("#date-alerts").html("");
         if (data.reportExist == true) {
@@ -137,16 +128,16 @@
 
     $(document).on('paste','[contenteditable]',function(e) {
       e.preventDefault();
-      $("#alerts").html("");
+      $("#report-data-alerts").html("");
       var text  = (e.originalEvent || e).clipboardData.getData('text/plain');
       //var rows  = text.split("\n");
       var table = $('<table class="table"><tr><th>Имя</th><th>Махабиги</th><th>Биги</th><th>Средние</th><th>Малые</th></tr>');
       var data  = processData(text);
 
       if (data == -1) {
-        $("#alerts").append($("#incorrect-data-columns-error-alert").clone().show());
+        $("#report-data-alerts").append($("#incorrect-data-columns-error-alert").clone().show());
       } else if (data == -2) {
-        $("#alerts").append($("#incorrect-data-empty-alert").clone().show());
+        $("#report-data-alerts").append($("#incorrect-data-empty-alert").clone().show());
       } else {
         for(var datarow in data) {
           var row = $('<tr />');
@@ -155,7 +146,7 @@
           }
           table.append(row);
         }
-        $('#report').html(table);
+        $('#report-preview').html(table);
 
       }
     });
