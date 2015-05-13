@@ -14,6 +14,7 @@
 //= require jquery_ujs
 //= require bootstrap
 //= require bootstrap-datepicker
-//= require typeahead.js
+//= require typeahead
+//= require jquery.tabletojson
 //= require turbolinks
 //= require_tree .

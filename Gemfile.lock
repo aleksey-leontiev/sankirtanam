@@ -83,6 +83,7 @@ GEM
       rails-assets-bootstrap (>= 2.0.4, < 4.0)
       rails-assets-jquery (>= 1.7.1)
     rails-assets-jquery (2.1.4)
+    rails-assets-table-to-json (0.11.0)
     rails-assets-typeahead.js (0.11.1)
       rails-assets-jquery (>= 1.7)
     rails-assets-typeahead.js-bootstrap3.less (0.1.4)
@@ -148,6 +149,7 @@ DEPENDENCIES
   rails (= 4.1.6)
   rails-assets-bootstrap!
   rails-assets-bootstrap-datepicker!
+  rails-assets-table-to-json!
   rails-assets-typeahead.js!
   rails-assets-typeahead.js-bootstrap3.less!
   sass-rails (~> 4.0.3)

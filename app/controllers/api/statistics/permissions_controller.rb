@@ -11,6 +11,19 @@ class Api::Statistics::PermissionsController < ApplicationController
   #   result:      True/False.
   #   newLocation: Set to true in case of location does not exist.
   #   reportExist: Report for specified date and location already exist.
+  #
+  # examples:
+  #  new report for existing location:
+  #    { location: spb } =>
+  #    { result: true, newLocation: false }
+  #
+  #  new report for existing location:
+  #    { location: spb, date: '01/2015' } =>
+  #    { result: true, newLocation: false, reportExist: false }
+  #
+  #  new report for new location:
+  #    { location: nowhere, date: '01/2015' } =>
+  #    { result: true, newLocation: true, reportExist: false }
   def canSendReport
     # get parameters
     param_location_name = params[:location]

@@ -1,3 +1,7 @@
+<div id="success-alert" class="alert alert-success" role="alert" style="display:none">
+  <strong>Отчет сохранен!</strong> Отправленный отчет сохранен.
+</div>
+
 <div class="panel panel-default">
   <div class="panel-heading">
     <h3 class="panel-title">Данные отчета</h3>
@@ -8,7 +12,16 @@
     <div class="form-group">
       <input id="location" class="form-control typeahead" type="text" placeholder="Локация">
     </div>
-    <div id="location-alerts"></div>
+    <div id="new-location-alert" class="alert alert-info" role="alert" style="display:none">
+      <strong>Новая локация!</strong> Спасибо, что проявлете интерес к составлению отчетов.
+      Новая локация будет создана, Вы будете назначены её администратором.
+      В дальнейшем это поле будет заполнено автоматически. Если Вы ответственнены на несколько локаций,
+      то просто введите новое название в это поле.
+    </div>
+    <div id="access-denied-alert" class="alert alert-danger" role="alert" style="display:none">
+      <strong>Нет прав!</strong> У Вас нет прав на отправку отчетов по данной локации.
+      Если это не так свяжитесь с администратором.
+    </div>
 
     <!-- date component -->
     <div class="form-group">
@@ -17,7 +30,10 @@
         <span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
       </div>
     </div>
-    <div id="date-alerts"></div>
+    <div id="report-exist-alert" class="alert alert-warning" role="alert" style="display:none">
+      <strong>Отчет уже есть!</strong> На данный период отчет уже существует.
+      При сохранении этого отчета старый будет обновлен. Проверьте дату дважды.
+    </div>
 
     <!-- report drop box component -->
     <div class="form-group">
@@ -30,50 +46,25 @@
         </span>
       </div>
     </div>
-    <div id="report-data-alerts"></div>
+    <div id="incorrect-data-columns-error-alert" class="alert alert-danger" role="alert" style="display:none">
+      <strong>Некорректные данные!</strong> Вставляемая таблица должна содержать пять колонок: имя, махабиги, биги, средние, малые. Колонки с количеством книг и очков компировать не нужно - они будут подсчитаны автоматически.
+    </div>
+    <div id="incorrect-data-empty-alert" class="alert alert-danger" role="alert" style="display:none">
+      <strong>Некорректные данные!</strong> Таблица пуста или нетабличные данные.
+    </div>
   </div> <!-- /panel-body -->
 
   <!-- report preview component -->
   <div id="report-preview">
-    <table class="table"></table>
+    <table id="report-table" class="table"></table>
   </div>
 
   <!-- report form footer-->
   <div class="panel-footer">
-    <a href="#" class="btn btn-primary">Сохранить</a>
+    <a id="save" class="btn btn-primary" data-loading-text="Сохраняю...">Сохранить</a>
   </div>
 </div>
 
-<!-- alerts -->
-<div id="incorrect-data-columns-error-alert" class="alert alert-danger alert-dismissible" role="alert" style="display:none">
-  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-  <strong>Некорректные данные!</strong> Вставляемая таблица должна содержать пять колонок: имя, махабиги, биги, средние, малые. Колонки с количеством книг и очков компировать не нужно - они будут подсчитаны автоматически.
-</div>
-
-<div id="incorrect-data-empty-alert" class="alert alert-danger alert-dismissible" role="alert" style="display:none">
-  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-  <strong>Некорректные данные!</strong> Таблица пуста или нетабличные данные.
-</div>
-
-<div id="new-location-alert" class="alert alert-info alert-dismissible" role="alert" style="display:none">
-  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-  <strong>Новая локация!</strong> Спасибо, что проявлете интерес к составлению отчетов.
-  Новая локация будет создана, Вы будете назначены её администратором.
-  В дальнейшем это поле будет заполнено автоматически. Если Вы ответственнены на несколько локаций,
-  то просто введите новое название в это поле.
-</div>
-
-<div id="access-denied-alert" class="alert alert-danger alert-dismissible" role="alert" style="display:none">
-  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-  <strong>Нет прав!</strong> У Вас нет прав на отправку отчетов по данной локации.
-  Если это не так свяжитесь с администратором.
-</div>
-
-<div id="report-exist-alert" class="alert alert-warning" role="alert" style="display:none">
-  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-  <strong>Отчет уже есть!</strong> На данный период отчет уже существует.
-  При сохранении этого отчета старый будет обновлен. Проверьте дату дважды.
-</div>
 
 
 <script>
@@ -88,7 +79,37 @@
   });
 
   $(function () {
-    $('[data-toggle="popover"]').popover()
+    function showAlert(obj) {
+      obj.stop(true).fadeIn({
+        duration: 500,
+        queue: false
+      }).css('display', 'none').slideDown(500);
+      return obj;
+    }
+    function hideAlert(obj) {
+      obj.stop(true).fadeOut({
+        duration: 250,
+        queue: false
+      }).slideUp(250);
+      return obj;
+    }
+
+    $('[data-toggle="popover"]').popover();
+
+    $('#save').on("click", function () {
+      var table = $('#report-table').tableToJSON();
+      $("#save").button('loading');
+      $.post("/api/statistics/reports/new", {
+        location: $("#location").val(),
+        date: $("#date").val(),
+        report: table }, function (data) {
+          if (data.result == true) {
+            showAlert($("#success-alert"));
+          }
+          $("#save").button("reset");
+        });
+      console.log(table);
+    });
 
     $('#location').typeahead({
       hint: true,
@@ -97,14 +118,16 @@
     { name: 'states',
       source: states
     }).on('typeahead:change', function (obj, datum) {
+      hideAlert($("#new-location-alert"));
+      hideAlert($("#access-denied-alert"));
+
       $.get("/api/statistics/permissions/canSendReport.json", {location:datum, user:"admin"}, function(data) {
-        $("#location-alerts").html("");
         if (data.result == true) {
           if (data.newLocation == true) {
-            $("#location-alerts").append($("#new-location-alert").clone().show());
+            showAlert($("#new-location-alert"));
           }
         } else {
-          $("#location-alerts").append($("#access-denied-alert").clone().show());
+          showAlert($("#access-denied-alert"));
         }
       });
     });
@@ -116,28 +139,31 @@
       language: "ru",
       autoclose: true
     }).on('changeDate', function () {
+      hideAlert($("#report-exist-alert"));
+
       var value = $("#date").val();
       var location = $("#location").val();
       $.get("/api/statistics/permissions/canSendReport.json", {date:value, location:location, user:"admin"}, function(data) {
-        $("#date-alerts").html("");
         if (data.reportExist == true) {
-          $("#date-alerts").append($("#report-exist-alert").clone().show());
+          showAlert($("#report-exist-alert"));
         }
       });
     });
 
     $(document).on('paste','[contenteditable]',function(e) {
       e.preventDefault();
-      $("#report-data-alerts").html("");
+      hideAlert($("#incorrect-data-columns-error-alert"));
+      hideAlert($("#incorrect-data-empty-alert"));
+
       var text  = (e.originalEvent || e).clipboardData.getData('text/plain');
       //var rows  = text.split("\n");
-      var table = $('<table class="table"><tr><th>Имя</th><th>Махабиги</th><th>Биги</th><th>Средние</th><th>Малые</th></tr>');
+      var table = $('<table id="report-table" class="table"><tr><th data-override="name">Имя</th><th data-override="huge">Махабиги</th><th data-override="big">Биги</th><th data-override="medium">Средние</th><th data-override="small">Малые</th></tr>');
       var data  = processData(text);
 
       if (data == -1) {
-        $("#report-data-alerts").append($("#incorrect-data-columns-error-alert").clone().show());
+        showAlert($("#incorrect-data-columns-error-alert"));
       } else if (data == -2) {
-        $("#report-data-alerts").append($("#incorrect-data-empty-alert").clone().show());
+        showAlert($("#incorrect-data-empty-alert"));
       } else {
         for(var datarow in data) {
           var row = $('<tr />');
