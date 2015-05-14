@@ -1,7 +1,12 @@
-<div id="success-alert" class="alert alert-success" role="alert" style="display:none">
-  <strong>Отчет сохранен!</strong> Отправленный отчет сохранен.
+<!-- report saving alerts -->
+<div id="save-report-success-alert" class="alert alert-success hidden" role="alert">
+  <strong>Отчет сохранен!</strong>
+</div>
+<div id="save-report-error-alert" class="alert alert-danger hidden" role="alert">
+  <strong>Отчет не сохранен!</strong> Ошибка при сохранении отчета.
 </div>
 
+<!-- report data panel -->
 <div class="panel panel-default">
   <div class="panel-heading">
     <h3 class="panel-title">Данные отчета</h3>
@@ -12,13 +17,13 @@
     <div class="form-group">
       <input id="location" class="form-control typeahead" type="text" placeholder="Локация">
     </div>
-    <div id="new-location-alert" class="alert alert-info" role="alert" style="display:none">
+    <div id="new-location-alert" class="alert alert-info hidden" role="alert">
       <strong>Новая локация!</strong> Спасибо, что проявлете интерес к составлению отчетов.
       Новая локация будет создана, Вы будете назначены её администратором.
       В дальнейшем это поле будет заполнено автоматически. Если Вы ответственнены на несколько локаций,
       то просто введите новое название в это поле.
     </div>
-    <div id="access-denied-alert" class="alert alert-danger" role="alert" style="display:none">
+    <div id="access-denied-alert" class="alert alert-danger hidden" role="alert">
       <strong>Нет прав!</strong> У Вас нет прав на отправку отчетов по данной локации.
       Если это не так свяжитесь с администратором.
     </div>
@@ -30,7 +35,7 @@
         <span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
       </div>
     </div>
-    <div id="report-exist-alert" class="alert alert-warning" role="alert" style="display:none">
+    <div id="report-exist-alert" class="alert alert-warning hidden" role="alert">
       <strong>Отчет уже есть!</strong> На данный период отчет уже существует.
       При сохранении этого отчета старый будет обновлен. Проверьте дату дважды.
     </div>
@@ -46,10 +51,10 @@
         </span>
       </div>
     </div>
-    <div id="incorrect-data-columns-error-alert" class="alert alert-danger" role="alert" style="display:none">
+    <div id="incorrect-data-columns-error-alert" class="alert alert-danger hidden" role="alert">
       <strong>Некорректные данные!</strong> Вставляемая таблица должна содержать пять колонок: имя, махабиги, биги, средние, малые. Колонки с количеством книг и очков компировать не нужно - они будут подсчитаны автоматически.
     </div>
-    <div id="incorrect-data-empty-alert" class="alert alert-danger" role="alert" style="display:none">
+    <div id="incorrect-data-empty-alert" class="alert alert-danger hidden" role="alert">
       <strong>Некорректные данные!</strong> Таблица пуста или нетабличные данные.
     </div>
   </div> <!-- /panel-body -->
@@ -66,9 +71,9 @@
 </div>
 
 
-
 <script>
   var states = new Bloodhound({
+    // function(str) { return str.split(''); }
     datumTokenizer: Bloodhound.tokenizers.whitespace,
     queryTokenizer: Bloodhound.tokenizers.whitespace,
     prefetch: {
@@ -83,14 +88,14 @@
       obj.stop(true).fadeIn({
         duration: 500,
         queue: false
-      }).css('display', 'none').slideDown(500);
+      }).removeClass('hidden').css('display', 'none').slideDown(500);
       return obj;
     }
     function hideAlert(obj) {
       obj.stop(true).fadeOut({
         duration: 250,
         queue: false
-      }).slideUp(250);
+      }).slideUp(250, function () { $(this).addClass('hidden'); } );
       return obj;
     }
 
@@ -98,13 +103,17 @@
 
     $('#save').on("click", function () {
       var table = $('#report-table').tableToJSON();
+      hideAlert($("#save-report-success-alert"));
+      hideAlert($("#save-report-error-alert"));
       $("#save").button('loading');
       $.post("/api/statistics/reports/new", {
         location: $("#location").val(),
         date: $("#date").val(),
         report: table }, function (data) {
           if (data.result == true) {
-            showAlert($("#success-alert"));
+            showAlert($("#save-report-success-alert"));
+          } else {
+            showAlert($("#save-report-error-alert"));
           }
           $("#save").button("reset");
         });
