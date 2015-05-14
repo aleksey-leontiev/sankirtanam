@@ -37,6 +37,7 @@ source 'https://rails-assets.org' do
   gem 'rails-assets-typeahead.js'
   gem 'rails-assets-typeahead.js-bootstrap3.less'
   gem 'rails-assets-table-to-json'
+  gem 'rails-assets-amcharts'
 end
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'

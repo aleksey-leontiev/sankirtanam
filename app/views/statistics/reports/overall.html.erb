@@ -1,0 +1,43 @@
+<script type="text/javascript">
+AmCharts.makeChart("chartdiv",
+	{
+		"type": "serial",
+		"path": "http://www.amcharts.com/lib/3/",
+		"pathToImages": "http://cdn.amcharts.com/lib/3/images/",
+		"categoryField": "date",
+		"categoryAxis": {
+			"gridPosition": "start"
+		},
+		"chartCursor": {},
+		"chartScrollbar": {},
+		"trendLines": [],
+		"graphs": [
+			{
+				"balloonText": "[[title]] книг за [[category]] [[value]]",
+				"id": "AmGraph-1",
+				"lineThickness": 2,
+				"title": "Количество",
+				"type": "step",
+				"valueField": "quantity"
+			}
+		],
+		"guides": [],
+		"valueAxes": [
+			{
+				"id": "ValueAxis-1",
+				"title": "Количество книг"
+			}
+		],
+		"allLabels": [],
+		"balloon": {},
+		"export": {
+			"enabled": true
+		},
+		"dataProvider": <%= raw @data.to_json %>
+	}
+);
+</script>
+
+<body>
+	<div id="chartdiv" style="width: 100%; height: 400px; background-color: #FFFFFF;" ></div>
+</body>

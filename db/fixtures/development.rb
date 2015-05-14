@@ -14,32 +14,30 @@ Person.seed(:id,
   { :id => 8, :name => "Ачьюта Гаура дас", :location_id => 3},
   { :id => 9, :name => "Петр", :location_id => 3})
 
-StatisticReport.seed(:id,
-  { :id => 1, :location_id => 1, :date => "01/01/2015" },
-  { :id => 2, :location_id => 1, :date => "01/02/2015" },
-  { :id => 3, :location_id => 1, :date => "01/03/2015" },
-  { :id => 4, :location_id => 2, :date => "01/01/2015" },
-  { :id => 5, :location_id => 2, :date => "01/02/2015" },
-  { :id => 6, :location_id => 3, :date => "01/01/2015" })
+for year in 2013..2016 do
+  for month in 1..12 do
+    report_id = "#{year}#{month}00".to_i
+    record_id = "#{year}#{month}00".to_i
+    detail_id = "#{year}#{month}00".to_i
 
-StatisticRecord.seed(:id,
-  # moskow
-  { :id => 1, :statistic_report_id => 1, :person_id => 1, :huge => 10, :big => 21, :medium => 71, :small => 91},
-  { :id => 2, :statistic_report_id => 1, :person_id => 2, :huge => 21, :big => 31, :medium => 51, :small => 81},
-  { :id => 3, :statistic_report_id => 1, :person_id => 3, :huge => 11, :big => 21, :medium => 41, :small => 61},
-  { :id => 4, :statistic_report_id => 2, :person_id => 1, :huge => 13, :big => 11, :medium => 31, :small => 50},
-  { :id => 5, :statistic_report_id => 2, :person_id => 2, :huge => 13, :big => 71, :medium => 91, :small => 63},
-  { :id => 6, :statistic_report_id => 3, :person_id => 1, :huge => 14, :big => 51, :medium => 71, :small => 82},
-  { :id => 7, :statistic_report_id => 3, :person_id => 3, :huge => 12, :big => 11, :medium => 21, :small => 11},
-  # spb
-  { :id => 8, :statistic_report_id => 4, :person_id => 4, :huge => 11, :big => 11, :medium => 21, :small => 10},
-  { :id => 9, :statistic_report_id => 4, :person_id => 5, :huge => 13, :big => 21, :medium => 11, :small => 11},
-  { :id => 10, :statistic_report_id => 5, :person_id => 6, :huge => 11, :big => 31, :medium => 10, :small => 31},
-  # krs
-  { :id => 11, :statistic_report_id => 6, :person_id => 7, :huge => 12, :big => 31, :medium => 21, :small => 10})
+    StatisticReport.seed(:id,
+      { :id => report_id+1, :location_id => 1, :date => "01/#{month}/#{year}" },
+      { :id => report_id+2, :location_id => 2, :date => "01/#{month}/#{year}" },
+      { :id => report_id+3, :location_id => 3, :date => "01/#{month}/#{year}" })
 
+    StatisticRecord.seed(:id,
 
-StatisticRecordDetails.seed(:id,
-  # moskow
-  { :id => 1, :statistic_record_id => 1, :quantity => 10, :scores => 10, :d01 => 1 }
-)
+      { :id => record_id+1, :statistic_report_id => report_id+1, :person_id => 1, :huge => rand(10), :big => rand(21), :medium => rand(71), :small => rand(91)}, # moskow
+      { :id => record_id+2, :statistic_report_id => report_id+1, :person_id => 2, :huge => rand(21), :big => rand(31), :medium => rand(51), :small => rand(81)},
+      { :id => record_id+3, :statistic_report_id => report_id+1, :person_id => 3, :huge => rand(11), :big => rand(21), :medium => rand(41), :small => rand(61)},
+      { :id => record_id+4, :statistic_report_id => report_id+2, :person_id => 4, :huge => rand(11), :big => rand(11), :medium => rand(21), :small => rand(10)}, # spb
+      { :id => record_id+5, :statistic_report_id => report_id+2, :person_id => 5, :huge => rand(13), :big => rand(21), :medium => rand(11), :small => rand(11)},
+      { :id => record_id+6, :statistic_report_id => report_id+2, :person_id => 6, :huge => rand(11), :big => rand(31), :medium => rand(10), :small => rand(31)},
+      { :id => record_id+7, :statistic_report_id => report_id+3, :person_id => 7, :huge => rand(12), :big => rand(31), :medium => rand(21), :small => rand(10)}) # krs
+
+    StatisticRecordDetails.seed(:id,
+      # moskow
+      { :id => detail_id+1, :statistic_record_id => report_id+1, :quantity => 10, :scores => 10, :d01 => 1 }
+    )
+  end
+end

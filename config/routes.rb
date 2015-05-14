@@ -10,6 +10,7 @@ Rails.application.routes.draw do
 
   namespace :statistics do
     get 'reports/new'
+    get 'reports/overall'
   end
 
 

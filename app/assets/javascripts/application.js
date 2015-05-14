@@ -16,5 +16,7 @@
 //= require bootstrap-datepicker
 //= require typeahead
 //= require jquery.tabletojson
+//= require amcharts
+//= require amcharts/serial
 //= require turbolinks
 //= require_tree .
