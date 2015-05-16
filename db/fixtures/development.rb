@@ -26,7 +26,6 @@ for year in 2013..2016 do
       { :id => report_id+3, :location_id => 3, :date => "01/#{month}/#{year}" })
 
     StatisticRecord.seed(:id,
-
       { :id => record_id+1, :statistic_report_id => report_id+1, :person_id => 1, :huge => rand(10), :big => rand(21), :medium => rand(71), :small => rand(91)}, # moskow
       { :id => record_id+2, :statistic_report_id => report_id+1, :person_id => 2, :huge => rand(21), :big => rand(31), :medium => rand(51), :small => rand(81)},
       { :id => record_id+3, :statistic_report_id => report_id+1, :person_id => 3, :huge => rand(11), :big => rand(21), :medium => rand(41), :small => rand(61)},

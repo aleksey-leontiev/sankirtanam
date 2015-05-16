@@ -77,12 +77,12 @@ GEM
       bundler (>= 1.3.0, < 2.0)
       railties (= 4.1.6)
       sprockets-rails (~> 2.0)
-    rails-assets-amcharts (3.14.1)
     rails-assets-bootstrap (3.3.4)
       rails-assets-jquery (>= 1.9.1)
     rails-assets-bootstrap-datepicker (1.4.0)
       rails-assets-bootstrap (>= 2.0.4, < 4.0)
       rails-assets-jquery (>= 1.7.1)
+    rails-assets-chartist (0.8.0)
     rails-assets-jquery (2.1.4)
     rails-assets-table-to-json (0.11.0)
     rails-assets-typeahead.js (0.11.1)
@@ -148,9 +148,9 @@ DEPENDENCIES
   jbuilder (~> 2.0)
   jquery-rails
   rails (= 4.1.6)
-  rails-assets-amcharts!
   rails-assets-bootstrap!
   rails-assets-bootstrap-datepicker!
+  rails-assets-chartist!
   rails-assets-table-to-json!
   rails-assets-typeahead.js!
   rails-assets-typeahead.js-bootstrap3.less!

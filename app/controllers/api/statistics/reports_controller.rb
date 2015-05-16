@@ -30,6 +30,7 @@ class Api::Statistics::ReportsController < ApplicationController
     report = StatisticReport.where(
       :location => location,
       :date => date).first_or_create
+    report.records.clear()
 
     # insert records to report
     param_report.each do |row|

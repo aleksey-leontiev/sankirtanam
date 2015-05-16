@@ -13,6 +13,7 @@
  *= require bootstrap
  *= require bootstrap-datepicker
  *= //require typeahead.js-bootstrap3.less/typeahead.scss
+ *= require chartist
  *= require_tree .
  *= require_self
  */
@@ -33,16 +34,11 @@ body {
 }
 
 .report-drop-box {
-    border: 2px dashed #0087F7;
-    border-radius: 5px;
-    background: white;
-    padding: 25px;
     text-align: center;
     outline: none;
 }
 
 .glyphicon-help {
-  color: lightgrey;
 }
 
 
@@ -235,3 +231,7 @@ fieldset[disabled] .twitter-typeahead .tt-input {
 .tt-menu .tt-suggestion p {
   margin: 0;
 }
+
+
+/* ----- */
+

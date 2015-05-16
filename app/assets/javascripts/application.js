@@ -14,9 +14,10 @@
 //= require jquery_ujs
 //= require bootstrap
 //= require bootstrap-datepicker
+//= require bootstrap-datepicker
+//= require bootstrap-datepicker/locales/bootstrap-datepicker.ru.js
 //= require typeahead
 //= require jquery.tabletojson
-//= require amcharts
-//= require amcharts/serial
+//= require chartist
 //= require turbolinks
 //= require_tree .
