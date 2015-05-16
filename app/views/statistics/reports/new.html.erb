@@ -15,7 +15,11 @@
   <div class="panel-body">
     <!-- location component-->
     <div class="form-group">
-      <input id="location" class="form-control typeahead" type="text" placeholder="Локация">
+      <label for="location">Локация</label>
+      <input id="location" class="form-control typeahead" type="text" placeholder="Локация" aria-describedby="location-help-block">
+      <span id="location-help-block" class="help-block">
+        Введите название города или ашрама за который Вы отправляете отчет.
+      </span>
     </div>
     <div id="new-location-alert" class="alert alert-info hidden" role="alert">
       <strong>Новая локация!</strong> Спасибо, что проявлете интерес к составлению отчетов.
@@ -30,10 +34,14 @@
 
     <!-- date component -->
     <div class="form-group">
+      <label for="date">Дата отчета</label>
       <div class="input-group date">
-        <input id="date" type="text" class="form-control" placeholder="Дата">
+        <input id="date" type="text" class="form-control" placeholder="Дата" aria-describedby="date-help-block">
         <span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
       </div>
+      <span id="date-help-block" class="help-block">
+        Выберите дату отчета из выпадающего меню.
+      </span>
     </div>
     <div id="report-exist-alert" class="alert alert-warning hidden" role="alert">
       <strong>Отчет уже есть!</strong> На данный период отчет уже существует.
@@ -43,11 +51,11 @@
     <!-- report drop box component -->
     <div class="form-group">
       <div class='well report-drop-box' contenteditable='true'>
-        Вставьте данные из Excel сюда.
+        Вставьте данные из <i>Excel</i> сюда.
         <span class="glyphicon glyphicon-question-sign glyphicon-help"
           aria-hidden="true" data-toggle="popover" data-trigger="hover"
           title="Как вставить данные?" data-html="true"
-          data-content="Скопируйте таблицу из Excel, содержащую следующие колонки: имя, махабиги, биги, средние, малые. Вставьте данные в это поле.">
+          data-content="Скопируйте <kbd>ctrl+с</kbd> данные из Excel и вставьте <kbd>ctrl+v</kbd> их сюда. Таблица должна содержать следующие колонки: имя, махабиги, биги, средние, малые.">
         </span>
       </div>
     </div>
