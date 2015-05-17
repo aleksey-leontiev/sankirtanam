@@ -19,5 +19,6 @@
 //= require typeahead
 //= require jquery.tabletojson
 //= require chartist
+//= require mindmup-editabletable
 //= require turbolinks
 //= require_tree .

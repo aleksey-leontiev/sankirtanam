@@ -18,7 +18,7 @@
       <label for="location">Локация</label>
       <input id="location" class="form-control typeahead" type="text" placeholder="Локация" aria-describedby="location-help-block">
       <span id="location-help-block" class="help-block">
-        Введите название города или ашрама за который Вы отправляете отчет.
+        Введите название города или ашрама за который Вы отправляете отчет. Пример: "Санкт-Петербург", "Москва. Ашрам Бхактиведанты".
       </span>
     </div>
     <div id="new-location-alert" class="alert alert-info hidden" role="alert">
@@ -69,12 +69,15 @@
 
   <!-- report preview component -->
   <div id="report-preview">
-    <table id="report-table" class="table"></table>
+    <table id="report-table" class="table"><tr><th data-override="name">Имя</th><th data-override="huge">Махабиги</th><th data-override="big">Биги</th><th data-override="medium">Средние</th><th data-override="small">Малые</th></tr></table>
   </div>
 
   <!-- report form footer-->
   <div class="panel-footer">
-    <a id="save" class="btn btn-primary" data-loading-text="Сохраняю...">Сохранить</a>
+    <a id="add-report-line" class="btn"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Добавить строку</a>
+    <div style="float: right">
+      <a id="save" class="btn btn-primary" data-loading-text="Сохраняю...">Сохранить</a>
+    </div>
   </div>
 </div>
 
@@ -108,6 +111,11 @@
     }
 
     $('[data-toggle="popover"]').popover();
+
+    $('#add-report-line').on("click", function() {
+      $("#report-table").append('<tr><td>-</td><td></td><td></td><td></td><td></td></tr>');
+      $('#report-table').editableTableWidget();
+    });
 
     $('#save').on("click", function () {
       var table = $('#report-table').tableToJSON();
@@ -190,6 +198,7 @@
           table.append(row);
         }
         $('#report-preview').html(table);
+        $('#report-table').editableTableWidget();
 
       }
     });

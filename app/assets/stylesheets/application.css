@@ -41,6 +41,10 @@ body {
 .glyphicon-help {
 }
 
+#add-report-line:hover {
+  color: black;
+}
+
 
 /*
  * typehead.js-bootstrap3.less
