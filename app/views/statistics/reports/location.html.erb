@@ -1,0 +1,80 @@
+<% if @no_data then %>
+<div class="jumbotron">
+  <h1>Годовой отчет. <%=@location.name%>, <%=@year%> год</h1>
+  <p class="lead">
+    Отображает общее количество распространненых книг по локации за <%=@year%> год.
+  </p>
+</div>
+<div class="alert alert-danger" role="alert">За данный период данных нет.</div>
+
+<% else %>
+<div class="jumbotron">
+  <h1>Годовой отчет. <%=@location.name%>, <%=@year%> год</h1>
+  <p class="lead">
+    Отображает общее количество распространненых книг по локации за <%=@year%> год.
+    Было распространено <%= @overall_quantity %> книг.
+  </p>
+</div>
+
+<div class="panel panel-default">
+  <div class="panel-heading">Общее количество распространненых книг по всем локациям за <%=@year%> год</div>
+  <div class="panel-body">
+    <div id="quantity-chart" class="ct-chart ct-double-octave"></div>
+  </div>
+
+	<table id="table" class="table">
+		<tr>
+		  <th>Имя</th>
+			<th>Книги</th>
+			<th>01</th><th>02</th><th>03</th><th>04</th><th>05</th><th>06</th>
+			<th>07</th><th>08</th><th>09</th><th>10</th><th>11</th><th>12</th>
+		</tr>
+		<% @persons.each do |person|  %>
+		  <tr>
+		    <td><%=person[:name]%></td>
+		    <td><%=person[:quantity]%></td>
+		    <% person[:data].each do |data| %>
+			      <td><%=data%></td>
+		    <% end %>
+		  </tr>
+		<% end %>
+	</table>
+
+	<div class="panel-footer">
+    Книг: <%= @overall_quantity %>;
+    Локаций: <%= @locations.count  %>;
+	</div>
+</div>
+
+<nav>
+  <ul class="pager">
+    <li class="previous"><a href="<%=statistics_reports_location_path(@location.url, @year-1)%>"><span aria-hidden="true">&larr;</span> <%=@year-1%> год</a></li>
+    <% if @year < @current_year then %>
+      <li class="next"><a href="<%=statistics_reports_location_path(@location.url, @year+1)%>"><%=@year+1%> год <span aria-hidden="true">&rarr;</span></a></li>
+    <% end %>
+  </ul>
+</nav>
+
+<script type="text/javascript">
+  new Chartist.Line('#quantity-chart', {
+    labels: ["янв", "фев", "март", "апр", "май", "июнь", "июль", "авг", "сент", "окт", "ноя", "дек"],
+    series: [{
+      name: 'series-1',
+      data: <%= raw @chart_data.to_json %>
+    }]
+  }, {
+    fullWidth: true,
+    showArea: true,
+    showPoint: false,
+    axisX: {
+      showLabel: true,
+      showGrid: true
+    },
+    series: {
+      'series-1': {
+        lineSmooth: Chartist.Interpolation.step()
+      }
+    }
+  });
+</script>
+<% end %>

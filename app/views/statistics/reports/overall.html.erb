@@ -1,96 +1,94 @@
-<body>
-  <div class="jumbotron">
-    <h1>Общий отчет</h1>
-    <p class="lead">
-      Отображает общее количество распространненых книг по всем локациям за все время.
-      За всё время было распространено <%= @overall_quantity %> книг.
-      Тройка самых активных локаций: <%= three_most_active_locations(@locations) %>.
-      Больше всего книг распространили: <%= three_most_active_persons(@persons) %>.
-    </p>
+<div class="jumbotron">
+  <h1>Общий отчет</h1>
+  <p class="lead">
+    Отображает общее количество распространненых книг по всем локациям за все время.
+    За всё время было распространено книг <%= @overall_quantity %> .
+    Тройка самых активных локаций: <%= three_most_active_locations(@locations) %>.
+    Больше всего книг распространили: <%= three_most_active_persons(@persons) %>.
+  </p>
+</div>
+
+<div class="panel panel-default">
+  <div class="panel-heading">Общее количество распространненых книг по всем локациям за все время</div>
+  <div class="panel-body">
+    <div id="quantity-chart" class="ct-chart ct-double-octave"></div>
   </div>
 
-  <div class="panel panel-default">
-    <div class="panel-heading">Общее количество распространненых книг по всем локациям за все время</div>
-    <div class="panel-body">
-      <div id="quantity-chart" class="ct-chart ct-double-octave"></div>
-    </div>
+	<table id="table" class="table">
+		<tr>
+			<th>Локация</th>
+			<th>Книги</th>
+		</tr>
+		<% @locations.each do |data|  %>
+			<tr>
+				<td><a href="<%=statistics_reports_location_path(data[:location_url], @current_year)%>"><%=data[:location_name]%></a></td>
+				<td><%=data[:quantity]%></td>
+			</tr>
+		<% end %>
+	</table>
 
-  	<table id="table" class="table">
-  		<tr>
-  			<th>Локация</th>
-  			<th>Книги</th>
-  		</tr>
-  		<% @locations.each do |data|  %>
-  			<tr>
-  				<td><%=data[:location]%></td>
-  				<td><%=data[:quantity]%></td>
-  			</tr>
-  		<% end %>
-  	</table>
+	<div class="panel-footer">
+    Книг: <%= @overall_quantity %>;
+    Локаций: <%= @locations.count  %>;
+	</div>
+</div>
 
-  	<div class="panel-footer">
-      Книг: <%= @overall_quantity %>;
-      Локаций: <%= @locations.count  %>;
-  	</div>
+<div class="panel panel-default">
+  <div class="panel-heading">Общее количество распространненых книг по распространителям</div>
+  <div class="panel-body">
+    <div id="distributors-chart" class="ct-chart ct-double-octave"></div>
   </div>
 
-  <div class="panel panel-default">
-    <div class="panel-heading">Общее количество распространненых книг по распространителям</div>
-    <div class="panel-body">
-      <div id="distributors-chart" class="ct-chart ct-double-octave"></div>
-    </div>
+	<table id="table" class="table">
+		<tr>
+		  <th>Имя</th>
+			<th>Локация</th>
+			<th>Книги</th>
+		</tr>
+		<% @persons.each do |data|  %>
+			<tr>
+			  <td><%=data[:name]%></td>
+				<td><%=data[:location]%></td>
+				<td><%=data[:quantity]%></td>
+			</tr>
+		<% end %>
+	</table>
 
-  	<table id="table" class="table">
-  		<tr>
-  		  <th>Имя</th>
-  			<th>Локация</th>
-  			<th>Книги</th>
-  		</tr>
-  		<% @persons.each do |data|  %>
-  			<tr>
-  			  <td><%=data[:name]%></td>
-  				<td><%=data[:location]%></td>
-  				<td><%=data[:quantity]%></td>
-  			</tr>
-  		<% end %>
-  	</table>
-
-  	<div class="panel-footer">
-      Человек: <%= @persons.count %>;
-      Книг: <%= @overall_quantity %>;
-      Локаций: <%= @locations.count  %>;
-  	</div>
-  </div>
+	<div class="panel-footer">
+    Человек: <%= @persons.count %>;
+    Книг: <%= @overall_quantity %>;
+    Локаций: <%= @locations.count  %>;
+	</div>
+</div>
 
 
-  <script type="text/javascript">
-    new Chartist.Line('#quantity-chart', {
-      labels: <%= raw overall_chart_labels(@data).to_json %>,
-      series: [{
-        name: 'series-1',
-        data: <%= raw overall_chart_data(@data).to_json %>
-      }]
-    }, {
-      fullWidth: true,
-      showArea: true,
-      showPoint: false,
-      axisX: {
-        showLabel: true,
-        showGrid: true
-      },
-      series: {
-        'series-1': {
-          lineSmooth: Chartist.Interpolation.step()
-        }
+<script type="text/javascript">
+  new Chartist.Line('#quantity-chart', {
+    labels: <%= raw overall_chart_labels(@data).to_json %>,
+    series: [{
+      name: 'series-1',
+      data: <%= raw overall_chart_data(@data).to_json %>
+    }]
+  }, {
+    fullWidth: true,
+    showArea: true,
+    showPoint: false,
+    axisX: {
+      showLabel: true,
+      showGrid: true
+    },
+    series: {
+      'series-1': {
+        lineSmooth: Chartist.Interpolation.step()
       }
-    });
+    }
+  });
 
-    new Chartist.Bar('#distributors-chart', {
-      labels: <%= raw @persons.map { |o| o[:name] }.to_json %>,
-      series: <%= raw @persons.map { |o| o[:quantity] }.to_json %>
-    }, {
-      distributeSeries: true,
-      fullWidth: true
-    });
-  </script>
-</body>
+  new Chartist.Bar('#distributors-chart', {
+    labels: <%= raw @persons.map { |o| o[:name] }.to_json %>,
+    series: <%= raw @persons.map { |o| o[:quantity] }.to_json %>
+  }, {
+    distributeSeries: true,
+    fullWidth: true
+  });
+</script>

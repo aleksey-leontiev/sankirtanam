@@ -11,6 +11,8 @@ Rails.application.routes.draw do
   namespace :statistics do
     get 'reports/new'
     get 'reports/overall'
+    get 'reports/annual/:year' => 'reports#annual', as: :reports_annual
+    get 'reports/location/:location/:year' => 'reports#location', as: :reports_location
   end
 
 

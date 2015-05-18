@@ -4,7 +4,7 @@ module Statistics::ReportsHelper
   end
 
   def three_most_active_locations(locations)
-    locations.take(3).map{ |obj| obj[:location] }.join(', ')
+    locations.take(3).map{ |obj| obj[:location_name] }.join(', ')
   end
 
   def overall_chart_labels(data)
@@ -13,5 +13,9 @@ module Statistics::ReportsHelper
 
   def overall_chart_data(data)
     data.map { |obj| obj[:quantity] }
+  end
+
+  def padright(a, n, x)
+    a.dup.fill(x, a.length...n)
   end
 end
