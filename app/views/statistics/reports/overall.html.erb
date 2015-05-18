@@ -2,7 +2,7 @@
   <h1>Общий отчет</h1>
   <p class="lead">
     Отображает общее количество распространненых книг по всем локациям за все время.
-    За всё время было распространено книг <%= @overall_quantity %> .
+    За всё время было распространено книг <%= @overall_quantity %>.
     Тройка самых активных локаций: <%= three_most_active_locations(@locations) %>.
     Больше всего книг распространили: <%= three_most_active_persons(@persons) %>.
   </p>
@@ -18,11 +18,17 @@
 		<tr>
 			<th>Локация</th>
 			<th>Книги</th>
+			<% [@current_year-3,@current_year-2,@current_year-1,@current_year].each do |y| %>
+			    <th><a href="<%=statistics_reports_annual_path(y)%>"><%=y%></a></th>
+			<% end %>
 		</tr>
 		<% @locations.each do |data|  %>
 			<tr>
 				<td><a href="<%=statistics_reports_location_path(data[:location_url], @current_year)%>"><%=data[:location_name]%></a></td>
 				<td><%=data[:quantity]%></td>
+				<% data[:data].each do |q| %>
+		      <td><%=q%></td>
+		    <% end %>
 			</tr>
 		<% end %>
 	</table>
@@ -44,12 +50,18 @@
 		  <th>Имя</th>
 			<th>Локация</th>
 			<th>Книги</th>
+			<% [@current_year-3,@current_year-2,@current_year-1,@current_year].each do |y| %>
+			  <th><%=y%></th>
+			<% end %>
 		</tr>
 		<% @persons.each do |data|  %>
 			<tr>
 			  <td><%=data[:name]%></td>
 				<td><%=data[:location]%></td>
 				<td><%=data[:quantity]%></td>
+			  <% data[:data].each do |q| %>
+		      <td><%=q%></td>
+		    <% end %>
 			</tr>
 		<% end %>
 	</table>

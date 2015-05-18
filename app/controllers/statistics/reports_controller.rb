@@ -17,21 +17,48 @@ class Statistics::ReportsController < ApplicationController
       "select strftime('%Y', date) as year, sum(huge+big+medium+small) as quantity, l.name as location_name, l.url as location_url " +
        "from statistic_records rcd inner join statistic_reports rpt on rpt.id = rcd.statistic_report_id " +
        "inner join locations l on l.id == rpt.location_id " +
-       "group by l.id order by quantity desc"
+       "group by l.id, year order by l.id, year, quantity desc"
     ).map { |obj|
       { year: obj["year"], location_name: obj["location_name"],
         location_url: obj["location_url"], quantity: obj["quantity"] }
-    }
+    }.group_by { |obj| # group by location
+      { location_name: obj[:location_name], location_url: obj[:location_url] }
+    }.map { |obj| # map to { location:"", data:[], quantity:00 }
+      { location_name: obj[0][:location_name], location_url: obj[0][:location_url],
+        data: [0,0,0,0].each_with_index.map {
+          |o,i| (obj[1].detect{ |x|x[:year].to_i == i+1+@current_year-4}or{quantity:0})[:quantity]
+        }
+      }
+    }.map! { |obj| # inject quantity
+      obj[:quantity] = obj[:data].sum
+      obj
+    }.sort_by { |obj|
+      obj[:quantity]
+    }.reverse
 
     # active persons
     @persons = ActiveRecord::Base.connection.execute(
-      "select sum(huge+big+medium+small) quantity, p.name, l.name as location from statistic_records r " +
+      "select sum(huge+big+medium+small) quantity, p.name, l.name as location, strftime('%Y', date) as year from statistic_records r " +
       "inner join people    p on r.person_id   = p.id " +
       "inner join locations l on p.location_id = l.id " +
-      "group by p.id order by quantity desc"
+      "inner join statistic_reports rpt on rpt.id = r.statistic_report_id " +
+      "group by p.id, year order by year, quantity desc"
     ).map { |obj|
-      { name: obj["name"], quantity: obj["quantity"], location: obj["location"] }
-    }
+      { name: obj["name"], quantity: obj["quantity"], location: obj["location"], year: obj["year"] }
+    }.group_by { |obj| # group by location
+      obj[:name]
+    }.map { |obj| # map to { location:"", data:[], quantity:00 }
+      { name: obj[0],
+        data: [0,0,0,0].each_with_index.map {
+          |o,i| (obj[1].detect{ |x|x[:year].to_i == i+1+@current_year-4}or{quantity:0})[:quantity]
+        }
+      }
+    }.map! { |obj| # inject quantity
+      obj[:quantity] = obj[:data].sum
+      obj
+    }.sort_by { |obj|
+      obj[:quantity]
+    }.reverse
 
     # overall quantity
     # @persons.map{|o| o[:quantity].to_i}.inject(:+)
