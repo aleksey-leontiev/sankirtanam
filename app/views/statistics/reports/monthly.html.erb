@@ -1,0 +1,75 @@
+<% if @no_data then %>
+<div class="jumbotron">
+  <h1>Месячный отчет. <%=@location.name%>, <%=@month%>/<%=@year%></h1>
+  <p class="lead">
+    Отображает общее количество распространненых книг по локации за <%=@year%> год.
+  </p>
+</div>
+<div class="alert alert-danger" role="alert">За данный период данных нет.</div>
+
+<% else %>
+<div class="jumbotron">
+  <h1>Месячный отчет. <%=@location.name%>, <%=@month%>/<%=@year%></h1>
+  <p class="lead">
+    Отображает общее количество распространненых книг по локации за <%=@year%> год.
+    Было распространено <%= @overall_quantity %> книг.
+  </p>
+</div>
+
+<div class="panel panel-default">
+  <div class="panel-heading">Общее количество распространненых книг по всем локациям за <%=@year%> год</div>
+  <div class="panel-body">
+    <div id="distributors-chart" class="ct-chart ct-double-octave"></div>
+  </div>
+
+	<table id="table" class="table">
+		<tr>
+		  <th>Имя</th>
+			<th>Книги</th>
+			<th>Махабиги</th><th>Биги</th><th>Средние</th><th>Малые</th>
+		</tr>
+		<% @persons.each do |person|  %>
+		  <tr>
+		    <td><%=person[:name]%></td>
+		    <td><%=person[:quantity]%></td>
+		    <td><%=person[:huge]%></td>
+		    <td><%=person[:big]%></td>
+		    <td><%=person[:medium]%></td>
+		    <td><%=person[:small]%></td>
+		  </tr>
+		<% end %>
+	</table>
+
+	<div class="panel-footer">
+    Книг: <%= @overall_quantity %>;
+	</div>
+</div>
+
+<nav>
+  <ul class="pager">
+    <li class="previous">
+      <a href="<%=statistics_reports_monthly_path(@location.url, (@month==1?@year-1: @year), (@month>1 ? @month-1:12).to_s.rjust(2, '0'))%>">
+        <span aria-hidden="true">&larr;</span> <%=@month > 1 ? @month-1 : 12%>/<%=@month == 1 ? @year-1 : @year%>
+      </a>
+    </li>
+
+    <% if @year <= @current_year && @month < 11 then %>
+      <li class="next">
+        <a href="<%=statistics_reports_monthly_path(@location.url, (@month==12?@year+1: @year), (@month<12 ? @month+1:1).to_s.rjust(2, '0'))%>">
+          <%=(@month<12 ? @month+1:1)%>/<%=(@month==12?@year+1: @year)%> <span aria-hidden="true">&rarr;</span>
+        </a>
+      </li>
+    <% end %>
+  </ul>
+</nav>
+
+<script type="text/javascript">
+  new Chartist.Bar('#distributors-chart', {
+    series: <%=raw @persons.map{|o| o[:quantity]}.to_json%>,
+    labels: <%=raw @persons.map{|o| o[:name]}.to_json%>
+  }, {
+    distributeSeries: true,
+    fullWidth: true
+  });
+</script>
+<% end %>

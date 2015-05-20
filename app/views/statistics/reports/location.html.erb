@@ -1,6 +1,28 @@
+<% if @select_location %>
+  <div class="jumbotron">
+    <h1>Отчет по локации</h1>
+    <p class="lead">
+      Отображает общее количество распространненых книг по локации за <%=@year%> год.
+    </p>
+  </div>
+
+  <div class="list-group">
+    <div class="list-group-item active">
+      Выберите локацию
+    </div>
+
+    <% for location in @locations %>
+      <a href="<%=statistics_reports_location_path(location.url, @current_year)%>" class="list-group-item"><%=location.name%></a>
+    <% end %>
+  </div>
+<% end %>
+
+
+
+<% if !@select_location %>
 <% if @no_data then %>
 <div class="jumbotron">
-  <h1>Годовой отчет. <%=@location.name%>, <%=@year%> год</h1>
+  <h1><%=@location.name%>, <%=@year%> год</h1>
   <p class="lead">
     Отображает общее количество распространненых книг по локации за <%=@year%> год.
   </p>
@@ -9,7 +31,7 @@
 
 <% else %>
 <div class="jumbotron">
-  <h1>Годовой отчет. <%=@location.name%>, <%=@year%> год</h1>
+  <h1><%=@location.name%>, <%=@year%> год</h1>
   <p class="lead">
     Отображает общее количество распространненых книг по локации за <%=@year%> год.
     Было распространено <%= @overall_quantity %> книг.
@@ -26,8 +48,18 @@
 		<tr>
 		  <th>Имя</th>
 			<th>Книги</th>
-			<th>01</th><th>02</th><th>03</th><th>04</th><th>05</th><th>06</th>
-			<th>07</th><th>08</th><th>09</th><th>10</th><th>11</th><th>12</th>
+			<th><a href="<%=statistics_reports_monthly_path(@location.url, @year, '01')%>">01</a></th>
+			<th><a href="<%=statistics_reports_monthly_path(@location.url, @year, '02')%>">02</a></th>
+			<th><a href="<%=statistics_reports_monthly_path(@location.url, @year, '03')%>">03</a></th>
+			<th><a href="<%=statistics_reports_monthly_path(@location.url, @year, '04')%>">04</a></th>
+			<th><a href="<%=statistics_reports_monthly_path(@location.url, @year, '05')%>">05</a></th>
+			<th><a href="<%=statistics_reports_monthly_path(@location.url, @year, '06')%>">06</a></th>
+			<th><a href="<%=statistics_reports_monthly_path(@location.url, @year, '07')%>">07</a></th>
+			<th><a href="<%=statistics_reports_monthly_path(@location.url, @year, '08')%>">08</a></th>
+			<th><a href="<%=statistics_reports_monthly_path(@location.url, @year, '09')%>">09</a></th>
+			<th><a href="<%=statistics_reports_monthly_path(@location.url, @year, '10')%>">10</a></th>
+			<th><a href="<%=statistics_reports_monthly_path(@location.url, @year, '11')%>">11</a></th>
+			<th><a href="<%=statistics_reports_monthly_path(@location.url, @year, '12')%>">12</a></th>
 		</tr>
 		<% @persons.each do |person|  %>
 		  <tr>
@@ -42,7 +74,6 @@
 
 	<div class="panel-footer">
     Книг: <%= @overall_quantity %>;
-    Локаций: <%= @locations.count  %>;
 	</div>
 </div>
 
@@ -77,4 +108,5 @@
     }
   });
 </script>
+<% end %>
 <% end %>

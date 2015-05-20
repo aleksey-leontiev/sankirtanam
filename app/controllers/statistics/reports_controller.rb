@@ -157,6 +157,9 @@ class Statistics::ReportsController < ApplicationController
     param_year = params[:year]
     param_location = params[:location]
 
+    if param_year && param_location then
+
+
     # output params
     @year = param_year.to_i
     @location = Location.find_by_url(param_location)
@@ -235,5 +238,40 @@ class Statistics::ReportsController < ApplicationController
     )[0]["quantity"]
 
     @no_data = @chart_data.length == 0
+    else
+      @select_location = true
+      @locations = Location.all.order(:name)
+    end
+  end
+
+  # monthly report
+  def monthly
+    # get input parameters
+    param_year = params[:year]
+    param_month = params[:month]
+    param_location = params[:location]
+
+    # output params
+    @year = param_year.to_i
+    @month = param_month.to_i
+    @location = Location.find_by_url(param_location)
+    location_id = @location.id
+
+    # active persons
+    @persons = ActiveRecord::Base.connection.execute(
+      "select huge+big+medium+small as quantity, p.name, r.huge, r.big, r.medium, r.small from statistic_records r " +
+      "inner join statistic_reports rpt on rpt.id = r.statistic_report_id " +
+      "inner join people    p on r.person_id   = p.id " +
+      "where strftime('%Y', date) = '#{param_year}' and rpt.location_id = '#{location_id}' and strftime('%m', date)='#{param_month}' " +
+      "order by quantity desc"
+    ).map { |obj|
+      { name: obj["name"], quantity: obj["quantity"], huge: obj["huge"], big: obj["big"], medium: obj["medium"], small: obj["small"] }
+    }
+
+    # overall quantity
+    @overall_quantity = @persons.map{|o| o[:quantity].to_i}.inject(:+)
+
+    # no data found flag
+    @no_data = @persons.length == 0
   end
 end

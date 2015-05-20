@@ -38,9 +38,9 @@
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Статистика <span class="caret"></span></a>
                 <ul class="dropdown-menu" role="menu">
                   <li class="dropdown-header">Отчеты</li>
-                  <li><a href="<%=statistics_reports_overall_path%>">По всем локациям за все время</a></li>
-                  <li><a href="<%=statistics_reports_annual_path(@current_year)%>">По всем локациям за <%=@current_year%> год</a></li>
-                  <li><a href="#">По локации за год</a></li>
+                  <li><a href="<%=statistics_reports_overall_path%>">Суммарный отчет</a></li>
+                  <li><a href="<%=statistics_reports_annual_path(@current_year)%>">Годовой отчет</a></li>
+                  <li><a href="<%=statistics_reports_location_select_path()%>">Отчет по локации</a></li>
                   <li><a href="#">По распространителям</a></li>
                   <li><a href="#">Карта распространения книг</a></li>
                   <li class="divider"></li>
