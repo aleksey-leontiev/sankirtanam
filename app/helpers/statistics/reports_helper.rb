@@ -7,12 +7,12 @@ module Statistics::ReportsHelper
     locations.take(3).map{ |obj| obj[:location_name] }.join(', ')
   end
 
-  def overall_chart_labels(data)
-    data.map { |obj| if obj[:month] == "01" then obj[:year] else " " end }
+  def chart_labels(data)
+    data.map { |obj| if obj[:month] == "01" then obj[:year] else " " end }.to_json
   end
 
-  def overall_chart_data(data)
-    data.map { |obj| obj[:quantity] }
+  def chart_data(data)
+    data.map { |obj| obj[:quantity] }.to_json
   end
 
   def padright(a, n, x)

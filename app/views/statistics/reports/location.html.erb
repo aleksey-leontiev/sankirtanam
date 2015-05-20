@@ -91,7 +91,7 @@
     labels: ["янв", "фев", "март", "апр", "май", "июнь", "июль", "авг", "сент", "окт", "ноя", "дек"],
     series: [{
       name: 'series-1',
-      data: <%= raw @chart_data.to_json %>
+      data: <%= chart_data(@chart_data) %>
     }]
   }, {
     fullWidth: true,

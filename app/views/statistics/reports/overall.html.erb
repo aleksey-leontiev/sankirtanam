@@ -1,3 +1,4 @@
+<!-- overall report introduction -->
 <div class="jumbotron">
   <h1>Суммарный отчет</h1>
   <p class="lead">
@@ -8,6 +9,7 @@
   </p>
 </div>
 
+<!-- overall chart and table -->
 <div class="panel panel-default">
   <div class="panel-heading">Общее количество распространненых книг по всем локациям за все время</div>
   <div class="panel-body">
@@ -15,19 +17,35 @@
   </div>
 
 	<table id="table" class="table">
+		<!-- table header -->
 		<tr>
 			<th>Локация</th>
 			<th>Книги</th>
-			<% [@current_year-3,@current_year-2,@current_year-1,@current_year].each do |y| %>
-			    <th><a href="<%=statistics_reports_annual_path(y)%>"><%=y%></a></th>
+			<% [3,2,1,0].each do |y| %>
+			  <th>
+			    <a href="<%=statistics_reports_annual_path(@current_year-y)%>">
+			      <%=@current_year - y%>
+			     </a>
+			  </th>
 			<% end %>
 		</tr>
-		<% @locations.each do |data|  %>
+
+		<!-- table rows -->
+		<% @locations.each do |row|  %>
 			<tr>
-				<td><a href="<%=statistics_reports_location_path(data[:location_url], @current_year)%>"><%=data[:location_name]%></a></td>
-				<td><%=data[:quantity]%></td>
-				<% data[:data].each do |q| %>
-		      <td><%=q%></td>
+			  <!-- location name -->
+				<td>
+				  <a href="<%=statistics_reports_location_path(row[:location_url], @current_year)%>">
+				    <%=row[:location_name]%>
+				  </a>
+				</td>
+
+				<!-- quantity and scores -->
+				<td><%=row[:quantity]%></td>
+
+				<!-- quantity by year -->
+				<% row[:data].each do |year_quantity| %>
+		      <td><%=year_quantity%></td>
 		    <% end %>
 			</tr>
 		<% end %>
@@ -39,6 +57,7 @@
 	</div>
 </div>
 
+<!-- overall by person -->
 <div class="panel panel-default">
   <div class="panel-heading">Общее количество распространненых книг по распространителям</div>
   <div class="panel-body">
@@ -46,21 +65,26 @@
   </div>
 
 	<table id="table" class="table">
+		<!-- table header -->
 		<tr>
 		  <th>Имя</th>
 			<th>Локация</th>
 			<th>Книги</th>
-			<% [@current_year-3,@current_year-2,@current_year-1,@current_year].each do |y| %>
-			  <th><%=y%></th>
+			<% [3,2,1,0].each do |y| %>
+	      <th>
+			    <%=@current_year - y%>
+			  </th>
 			<% end %>
 		</tr>
-		<% @persons.each do |data|  %>
+
+		<!-- person rows -->
+		<% @persons.each do |row|  %>
 			<tr>
-			  <td><%=data[:name]%></td>
-				<td><%=data[:location]%></td>
-				<td><%=data[:quantity]%></td>
-			  <% data[:data].each do |q| %>
-		      <td><%=q%></td>
+			  <td><%=row[:name]%></td>
+				<td><%=row[:location]%></td>
+				<td><%=row[:quantity]%></td>
+			  <% row[:data].each do |quantity| %>
+		      <td><%=quantity%></td>
 		    <% end %>
 			</tr>
 		<% end %>
@@ -68,7 +92,7 @@
 
 	<div class="panel-footer">
     Человек: <%= @persons.count %>;
-    Книг: <%= @overall_quantity %>;
+    Книг:    <%= @overall_quantity %>;
     Локаций: <%= @locations.count  %>;
 	</div>
 </div>
@@ -76,19 +100,15 @@
 
 <script type="text/javascript">
   new Chartist.Line('#quantity-chart', {
-    labels: <%= raw overall_chart_labels(@data).to_json %>,
+    labels: <%= raw chart_labels(@data) %>,
     series: [{
       name: 'series-1',
-      data: <%= raw overall_chart_data(@data).to_json %>
+      data: <%= raw chart_data(@data) %>
     }]
   }, {
     fullWidth: true,
     showArea: true,
     showPoint: false,
-    axisX: {
-      showLabel: true,
-      showGrid: true
-    },
     series: {
       'series-1': {
         lineSmooth: Chartist.Interpolation.step()
