@@ -15,6 +15,7 @@ Rails.application.routes.draw do
     get 'reports/location/:location/:year' => 'reports#location', as: :reports_location
     get 'reports/location' => 'reports#location', as: :reports_location_select
     get 'reports/monthly/:location/:year-:month' => 'reports#monthly', as: :reports_monthly
+    get 'reports/personal/:id-:name' => 'reports#personal', as: :reports_personal
   end
 
 

@@ -80,7 +80,9 @@
 		<!-- person rows -->
 		<% @persons.each do |row|  %>
 			<tr>
-			  <td><%=row[:name]%></td>
+			  <td>
+			  	<a href="<%=statistics_reports_personal_path(row[:person_id], row[:name])%>"><%=row[:name]%></a>
+			  </td>
 				<td><%=row[:location]%></td>
 				<td><%=row[:quantity]%></td>
 			  <% row[:data].each do |quantity| %>

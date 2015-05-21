@@ -1,0 +1,66 @@
+<% if @no_data then %>
+<div class="jumbotron">
+  <h1>Годовой отчет за <%=@year%> год</h1>
+  <p class="lead">
+    Отображает общее количество распространненых книг по всем локациям за <%=@year%> год.
+  </p>
+</div>
+<div class="alert alert-danger" role="alert">За данный период данных нет.</div>
+
+<% else %>
+<div class="jumbotron">
+  <h1><%=@person.name%></h1>
+  <p class="lead">
+    Отображает общее количество распространненых книг.
+    Было распространено <%= @overall_quantity %> книг.
+  </p>
+</div>
+
+<div class="panel panel-default">
+  <div class="panel-heading">Общее количество распространненых книг по всем локациям за <%=@year%> год</div>
+  <div class="panel-body">
+    <div id="quantity-chart" class="ct-chart ct-double-octave"></div>
+  </div>
+
+	<table id="table" class="table">
+		<tr>
+			<th>Дата</th>
+			<th>Книги</th>
+			<th>Махбиги</th><th>Биги</th><th>Средние</th><th>Малые</th>
+		</tr>
+		<% @table_data.each do |row|  %>
+		  <tr class="<%=row[:month] == '01' ? 'info' : '' %>">
+		    <td><%=row[:month]%>/<%=row[:year]%></td>
+		    <td><%=row[:quantity]%></td>
+		    <td><%=row[:huge]%></td>
+		    <td><%=row[:big]%></td>
+		    <td><%=row[:medium]%></td>
+		    <td><%=row[:small]%></td>
+		  </tr>
+		<% end %>
+	</table>
+
+	<div class="panel-footer">
+    Книг за период: <%= @overall_quantity %>;
+	</div>
+</div>
+
+<script type="text/javascript">
+    new Chartist.Line('#quantity-chart', {
+    labels: <%= raw chart_labels(@chart_data) %>,
+    series: [{
+      name: 'series-1',
+      data: <%= raw chart_data(@chart_data) %>
+    }]
+  }, {
+    fullWidth: true,
+    showArea: true,
+    showPoint: false,
+    series: {
+      'series-1': {
+        lineSmooth: Chartist.Interpolation.step()
+      }
+    }
+  });
+</script>
+<% end %>

@@ -30,17 +30,17 @@ class Statistics::ReportsController < ApplicationController
 
     # active persons
     @persons = ActiveRecord::Base.connection.execute(
-      "select sum(huge+big+medium+small) quantity, p.name, l.name as location, strftime('%Y', date) as year from statistic_records r " +
+      "select sum(huge+big+medium+small) quantity, p.name, p.id as person_id, l.name as location, strftime('%Y', date) as year from statistic_records r " +
       "inner join people    p on r.person_id   = p.id " +
       "inner join locations l on p.location_id = l.id " +
       "inner join statistic_reports rpt on rpt.id = r.statistic_report_id " +
       "group by p.id, year order by year, quantity desc"
     ).map { |obj|
-      { name: obj["name"], quantity: obj["quantity"], location: obj["location"], year: obj["year"] }
+      { name: obj["name"], quantity: obj["quantity"], location: obj["location"], year: obj["year"], person_id: obj["person_id"] }
     }.group_by { |obj| # group by location
       { name: obj[:name], location: obj[:location] }
     }.map { |obj| # map to { location:"", data:[], quantity:00 }
-      { name: obj[0][:name], location: obj[0][:location],
+      { name: obj[0][:name], location: obj[0][:location], person_id: obj[1][0][:person_id],
         data: [0,0,0,0].each_with_index.map {
           |o,i| (obj[1].detect{ |x|x[:year].to_i == i+1+@current_year-4}or{quantity:0})[:quantity]
         }
@@ -98,18 +98,18 @@ class Statistics::ReportsController < ApplicationController
 
     # active persons
     @persons = ActiveRecord::Base.connection.execute(
-      "select sum(huge+big+medium+small) quantity, p.name, l.name as location, strftime('%m', date) as month from statistic_records r " +
+      "select sum(huge+big+medium+small) quantity, p.name, p.id as person_id, l.name as location, strftime('%m', date) as month from statistic_records r " +
       "inner join statistic_reports rpt on rpt.id = r.statistic_report_id " +
       "inner join people    p on r.person_id   = p.id " +
       "inner join locations l on p.location_id = l.id " +
       "where strftime('%Y', date) = '#{param_year}' " +
       "group by p.id, month order by p.id, month asc, quantity desc"
     ).map { |obj|
-      { name: obj["name"], quantity: obj["quantity"], location: obj["location"], month: obj["month"] }
+      { name: obj["name"], quantity: obj["quantity"], location: obj["location"], month: obj["month"], person_id: obj["person_id"] }
     }.group_by { |obj|
       { name: obj[:name], location: obj[:location] }
     }.map { |obj|
-      { name: obj[0][:name], location: obj[0][:location],
+      { name: obj[0][:name], location: obj[0][:location], person_id: obj[1][0][:person_id],
         data: [0,0,0,0,0,0,0,0,0,0,0,0].each_with_index.map {
           |o,i| (obj[1].detect{ |x|x[:month].to_i == i+1}or{quantity:0})[:quantity]
         }
@@ -175,18 +175,18 @@ class Statistics::ReportsController < ApplicationController
 
     # active persons
     @persons = ActiveRecord::Base.connection.execute(
-      "select sum(huge+big+medium+small) quantity, p.name, l.name as location, strftime('%m', date) as month from statistic_records r " +
+      "select sum(huge+big+medium+small) quantity, p.name, p.id as person_id, l.name as location, strftime('%m', date) as month from statistic_records r " +
       "inner join statistic_reports rpt on rpt.id = r.statistic_report_id " +
       "inner join people    p on r.person_id   = p.id " +
       "inner join locations l on p.location_id = l.id " +
       "where strftime('%Y', date) = '#{param_year}' and rpt.location_id = '#{location_id}'" +
       "group by p.id, month order by p.id, month asc, quantity desc"
     ).map { |obj|
-      { name: obj["name"], quantity: obj["quantity"], location: obj["location"], month: obj["month"] }
+      { name: obj["name"], quantity: obj["quantity"], location: obj["location"], month: obj["month"], person_id: obj["person_id"] }
     }.group_by { |obj|
       { name: obj[:name], location: obj[:location] }
     }.map { |obj|
-      { name: obj[0][:name], location: obj[0][:location],
+      { name: obj[0][:name], location: obj[0][:location], person_id: obj[1][0][:person_id],
         data: [0,0,0,0,0,0,0,0,0,0,0,0].each_with_index.map {
           |o,i| (obj[1].detect{ |x|x[:month].to_i == i+1}or{quantity:0})[:quantity]
         }
@@ -228,13 +228,13 @@ class Statistics::ReportsController < ApplicationController
 
     # active persons
     @persons = ActiveRecord::Base.connection.execute(
-      "select huge+big+medium+small as quantity, p.name, r.huge, r.big, r.medium, r.small from statistic_records r " +
+      "select huge+big+medium+small as quantity, p.name, p.id as person_id, r.huge, r.big, r.medium, r.small from statistic_records r " +
       "inner join statistic_reports rpt on rpt.id = r.statistic_report_id " +
       "inner join people    p on r.person_id   = p.id " +
       "where strftime('%Y', date) = '#{param_year}' and rpt.location_id = '#{location_id}' and strftime('%m', date)='#{param_month}' " +
       "order by quantity desc"
     ).map { |obj|
-      { name: obj["name"], quantity: obj["quantity"], huge: obj["huge"], big: obj["big"], medium: obj["medium"], small: obj["small"] }
+      { name: obj["name"], quantity: obj["quantity"], huge: obj["huge"], big: obj["big"], medium: obj["medium"], small: obj["small"], person_id: obj["person_id"] }
     }
 
     # overall quantity
@@ -242,6 +242,21 @@ class Statistics::ReportsController < ApplicationController
 
     # no data found flag
     @no_data = @persons.length == 0
+  end
+
+  # annual report
+  def personal
+    # get input parameters
+    param_id = params[:id]
+
+    @person = Person.find_by_id(param_id)
+
+    # chart data
+    @chart_data = personal_chart_data(param_id)
+    @table_data = personal_data(param_id)
+    @overall_quantity = @table_data.map {|o| o[:quantity]}.inject(:+)
+
+    @no_data = @chart_data.length == 0
   end
 
   private
@@ -284,6 +299,37 @@ class Statistics::ReportsController < ApplicationController
       "group by   month"
     ).map { |obj|
       { quantity: obj["quantity"] }
+    }
+  end
+
+  def personal_chart_data(id)
+    ActiveRecord::Base.connection.execute(
+      "select     strftime('%Y', date)       as year,    " +
+      "           strftime('%m', date)       as month,   " +
+      "           sum(huge+big+medium+small) as quantity " +
+      "from       statistic_records rcd " +
+      "inner join statistic_reports rpt on rpt.id = rcd.statistic_report_id " +
+      "where      rcd.person_id = '#{id}' " +
+      "group by   year, month " +
+      "order by   date "
+    ).map { |obj|
+      { quantity: obj["quantity"], year: obj["year"], month: obj["month"] }
+    }
+  end
+
+  def personal_data(id)
+    ActiveRecord::Base.connection.execute(
+      "select     strftime('%Y', date)       as year,     " +
+      "           strftime('%m', date)       as month,    " +
+      "           huge+big+medium+small      as quantity, " +
+      "           huge, big, medium, small " +
+      "from       statistic_records rcd " +
+      "inner join statistic_reports rpt on rpt.id = rcd.statistic_report_id " +
+      "where      rcd.person_id = '#{id}' " +
+      "order by   date "
+    ).map { |obj|
+      { quantity: obj["quantity"], year: obj["year"], month: obj["month"],
+        huge: obj["huge"], big: obj["big"], medium: obj["medium"], small: obj["small"] }
     }
   end
 end
