@@ -31,6 +31,8 @@ gem 'seed-fu'
 gem 'bundler', '>= 1.8.4'
 gem 'squeel'
 
+gem 'nprogress-rails'
+
 source 'https://rails-assets.org' do
   gem 'rails-assets-bootstrap'
   gem 'rails-assets-bootstrap-datepicker'

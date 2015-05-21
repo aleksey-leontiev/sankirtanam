@@ -21,4 +21,6 @@
 //= require chartist
 //= require mindmup-editabletable
 //= require turbolinks
+//= require nprogress
+//= require nprogress-turbolinks
 //= require_tree .

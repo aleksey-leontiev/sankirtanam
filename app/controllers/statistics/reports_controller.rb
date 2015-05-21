@@ -38,9 +38,9 @@ class Statistics::ReportsController < ApplicationController
     ).map { |obj|
       { name: obj["name"], quantity: obj["quantity"], location: obj["location"], year: obj["year"] }
     }.group_by { |obj| # group by location
-      obj[:name]
+      { name: obj[:name], location: obj[:location] }
     }.map { |obj| # map to { location:"", data:[], quantity:00 }
-      { name: obj[0],
+      { name: obj[0][:name], location: obj[0][:location],
         data: [0,0,0,0].each_with_index.map {
           |o,i| (obj[1].detect{ |x|x[:year].to_i == i+1+@current_year-4}or{quantity:0})[:quantity]
         }
