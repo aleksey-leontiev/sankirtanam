@@ -3,15 +3,17 @@
   <h1>Суммарный отчет</h1>
   <p class="lead">
     Отображает общее количество распространненых книг по всем локациям за все время.
-    За всё время было распространено книг <%= @overall_quantity %>.
-    Тройка самых активных локаций: <%= three_most_active_locations(@locations) %>.
-    Больше всего книг распространили: <%= three_most_active_persons(@persons) %>.
+    За всё время было распространено книг <%= @quantity %>.
+    Тройка самых активных локаций: <%= most_active_locations(@locations) %>.
+    Больше всего книг распространили: <%= most_active_persons(@persons) %>.
   </p>
 </div>
 
 <!-- overall chart and table -->
 <div class="panel panel-default">
-  <div class="panel-heading">Общее количество распространненых книг по всем локациям за все время</div>
+  <div class="panel-heading">
+  	Общее количество распространненых книг по всем локациям за все время
+  </div>
   <div class="panel-body">
     <div id="quantity-chart" class="ct-chart ct-double-octave"></div>
   </div>
@@ -21,10 +23,10 @@
 		<tr>
 			<th>Локация</th>
 			<th>Книги</th>
-			<% [3,2,1,0].each do |y| %>
+			<% @years.each do |year| %>
 			  <th>
-			    <a href="<%=statistics_reports_annual_path(@current_year-y)%>">
-			      <%=@current_year - y%>
+			    <a href="<%=statistics_reports_annual_path(year)%>">
+			      <%=year%>
 			     </a>
 			  </th>
 			<% end %>
@@ -44,16 +46,16 @@
 				<td><%=row[:quantity]%></td>
 
 				<!-- quantity by year -->
-				<% row[:data].each do |year_quantity| %>
-		      <td><%=year_quantity%></td>
+				<% row[:data].each do |quantity| %>
+		      <td><%=quantity%></td>
 		    <% end %>
 			</tr>
 		<% end %>
 	</table>
 
 	<div class="panel-footer">
-    Книг: <%= @overall_quantity %>;
-    Локаций: <%= @locations.count  %>;
+    Книг: <%= @quantity %>;
+    Локаций: <%= @locations.count %>;
 	</div>
 </div>
 
@@ -70,10 +72,8 @@
 		  <th>Имя</th>
 			<th>Локация</th>
 			<th>Книги</th>
-			<% [3,2,1,0].each do |y| %>
-	      <th>
-			    <%=@current_year - y%>
-			  </th>
+			<% @years.each do |year| %>
+	      <th><%=year%></th>
 			<% end %>
 		</tr>
 
@@ -94,35 +94,20 @@
 
 	<div class="panel-footer">
     Человек: <%= @persons.count %>;
-    Книг:    <%= @overall_quantity %>;
+    Книг:    <%= @quantity %>;
     Локаций: <%= @locations.count  %>;
 	</div>
 </div>
 
 
 <script type="text/javascript">
-  new Chartist.Line('#quantity-chart', {
-    labels: <%= raw chart_labels(@data) %>,
-    series: [{
-      name: 'series-1',
-      data: <%= raw chart_data(@data) %>
-    }]
-  }, {
-    fullWidth: true,
-    showArea: true,
-    showPoint: false,
-    series: {
-      'series-1': {
-        lineSmooth: Chartist.Interpolation.step()
-      }
-    }
+  new Chartist.Bar('#quantity-chart', {
+    labels: <%= raw overall_chart_labels %>,
+    series: <%= raw overall_chart_data(@data) %>
   });
 
   new Chartist.Bar('#distributors-chart', {
     labels: <%= raw @persons.map { |o| o[:name] }.to_json %>,
-    series: <%= raw @persons.map { |o| o[:quantity] }.to_json %>
-  }, {
-    distributeSeries: true,
-    fullWidth: true
+    series: <%= raw [@persons.map { |o| o[:quantity] }].to_json %>
   });
 </script>

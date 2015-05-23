@@ -16,6 +16,8 @@ Person.seed(:id,
 
 for year in 2013..2016 do
   for month in 1..12 do
+    if month % 2 == 0 then next end
+
     report_id = "#{year}#{month}00".to_i
     record_id = "#{year}#{month}00".to_i
     detail_id = "#{year}#{month}00".to_i
