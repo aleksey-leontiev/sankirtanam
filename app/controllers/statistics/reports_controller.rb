@@ -3,6 +3,7 @@ class Statistics::ReportsController < ApplicationController
   include Statistics::AnnualReportQueries
   include Statistics::LocationReportQueries
   include Statistics::MonthlyReportQueries
+  include Statistics::PersonalReportQueries
 
   # overall report
   def overall
@@ -84,43 +85,10 @@ class Statistics::ReportsController < ApplicationController
     @person = Person.find_by_id(param_id)
 
     # chart data
-    @chart_data = personal_chart_data(param_id)
-    @table_data = personal_data(param_id)
+    @chart_data = personal_report_chart_data(param_id)
+    @table_data = personal_report_data(param_id)
     @overall_quantity = @table_data.map {|o| o[:quantity]}.inject(:+)
 
     @no_data = @chart_data.length == 0
-  end
-
-  private
-
-  def personal_chart_data(id)
-    ActiveRecord::Base.connection.execute(
-      "select     strftime('%Y', date)       as year,    " +
-      "           strftime('%m', date)       as month,   " +
-      "           sum(huge+big+medium+small) as quantity " +
-      "from       statistic_records rcd " +
-      "inner join statistic_reports rpt on rpt.id = rcd.statistic_report_id " +
-      "where      rcd.person_id = '#{id}' " +
-      "group by   year, month " +
-      "order by   date "
-    ).map { |obj|
-      { quantity: obj["quantity"], year: obj["year"], month: obj["month"] }
-    }
-  end
-
-  def personal_data(id)
-    ActiveRecord::Base.connection.execute(
-      "select     strftime('%Y', date)       as year,     " +
-      "           strftime('%m', date)       as month,    " +
-      "           huge+big+medium+small      as quantity, " +
-      "           huge, big, medium, small " +
-      "from       statistic_records rcd " +
-      "inner join statistic_reports rpt on rpt.id = rcd.statistic_report_id " +
-      "where      rcd.person_id = '#{id}' " +
-      "order by   date "
-    ).map { |obj|
-      { quantity: obj["quantity"], year: obj["year"], month: obj["month"],
-        huge: obj["huge"], big: obj["big"], medium: obj["medium"], small: obj["small"] }
-    }
   end
 end

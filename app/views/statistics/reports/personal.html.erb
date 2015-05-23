@@ -46,21 +46,9 @@
 </div>
 
 <script type="text/javascript">
-    new Chartist.Line('#quantity-chart', {
-    labels: <%= raw chart_labels(@chart_data) %>,
-    series: [{
-      name: 'series-1',
-      data: <%= raw chart_data(@chart_data) %>
-    }]
-  }, {
-    fullWidth: true,
-    showArea: true,
-    showPoint: false,
-    series: {
-      'series-1': {
-        lineSmooth: Chartist.Interpolation.step()
-      }
-    }
+  new Chartist.Bar('#quantity-chart', {
+    labels: <%= raw overall_chart_labels(3) %>,
+    series: <%= raw overall_chart_data(@table_data, 3) %>
   });
 </script>
 <% end %>
