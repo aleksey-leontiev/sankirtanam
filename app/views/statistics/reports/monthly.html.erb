@@ -67,11 +67,8 @@
 
 <script type="text/javascript">
   new Chartist.Bar('#distributors-chart', {
-    series: <%=raw @persons.map{|o| o[:quantity]}.to_json%>,
+    series: <%=raw [@persons.map{|o| o[:quantity]}].to_json%>,
     labels: <%=raw @persons.map{|o| o[:name]}.to_json%>
-  }, {
-    distributeSeries: true,
-    fullWidth: true
   });
 </script>
 <% end %>

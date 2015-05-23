@@ -2,6 +2,7 @@ class Statistics::ReportsController < ApplicationController
   include Statistics::OverallReportQueries
   include Statistics::AnnualReportQueries
   include Statistics::LocationReportQueries
+  include Statistics::MonthlyReportQueries
 
   # overall report
   def overall
@@ -68,17 +69,7 @@ class Statistics::ReportsController < ApplicationController
     location_id = @location.id
 
     # active persons
-    @persons = ActiveRecord::Base.connection.execute(
-      "select huge+big+medium+small as quantity, p.name, p.id as person_id, r.huge, r.big, r.medium, r.small from statistic_records r " +
-      "inner join statistic_reports rpt on rpt.id = r.statistic_report_id " +
-      "inner join people    p on r.person_id   = p.id " +
-      "where strftime('%Y', date) = '#{param_year}' and rpt.location_id = '#{location_id}' and strftime('%m', date)='#{param_month}' " +
-      "order by quantity desc"
-    ).map { |obj|
-      { name: obj["name"], quantity: obj["quantity"], huge: obj["huge"], big: obj["big"], medium: obj["medium"], small: obj["small"], person_id: obj["person_id"] }
-    }
-
-    # overall quantity
+    @persons = monthly_report_persons_data(param_year, param_month, location_id)
     @overall_quantity = @persons.map{|o| o[:quantity].to_i}.inject(:+)
 
     # no data found flag
