@@ -89,25 +89,9 @@
 </nav>
 
 <script type="text/javascript">
-  new Chartist.Line('#quantity-chart', {
+  new Chartist.Bar('#quantity-chart', {
     labels: ["янв", "фев", "март", "апр", "май", "июнь", "июль", "авг", "сент", "окт", "ноя", "дек"],
-    series: [{
-      name: 'series-1',
-      data: <%= chart_data(@chart_data) %>
-    }]
-  }, {
-    fullWidth: true,
-    showArea: true,
-    showPoint: false,
-    axisX: {
-      showLabel: true,
-      showGrid: true
-    },
-    series: {
-      'series-1': {
-        lineSmooth: Chartist.Interpolation.step()
-      }
-    }
+    series: [<%= raw @chart_data.to_json %>]
   });
 </script>
 <% end %>
