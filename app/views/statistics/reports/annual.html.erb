@@ -12,7 +12,7 @@
   <h1>Годовой отчет за <%=@year%> год</h1>
   <p class="lead">
     Отображает общее количество распространненых книг по всем локациям за <%=@year%> год.
-    Было распространено <%= @overall_quantity %> книг.
+    Было распространено <%= @quantity %> книг.
   </p>
 </div>
 
@@ -41,7 +41,7 @@
 	</table>
 
 	<div class="panel-footer">
-    Книг: <%= @overall_quantity %>;
+    Книг: <%= @quantity %>;
     Локаций: <%= @locations.count  %>;
 	</div>
 </div>
@@ -76,7 +76,7 @@
 
 	<div class="panel-footer">
     Человек: <%= @persons.count %>;
-    Книг: <%= @overall_quantity %>;
+    Книг: <%= @quantity %>;
     Локаций: <%= @locations.count  %>;
 	</div>
 </div>
@@ -91,33 +91,14 @@
 </nav>
 
 <script type="text/javascript">
-  new Chartist.Line('#quantity-chart', {
+  new Chartist.Bar('#quantity-chart', {
     labels: ["янв", "фев", "март", "апр", "май", "июнь", "июль", "авг", "сент", "окт", "ноя", "дек"],
-    series: [{
-      name: 'series-1',
-      data: <%= raw chart_data(@chart_data) %>
-    }]
-  }, {
-    fullWidth: true,
-    showArea: true,
-    showPoint: false,
-    axisX: {
-      showLabel: true,
-      showGrid: true
-    },
-    series: {
-      'series-1': {
-        lineSmooth: Chartist.Interpolation.step()
-      }
-    }
+    series: [<%= @chart_data %>]
   });
 
   new Chartist.Bar('#distributors-chart', {
-    series: <%=raw @persons.map{|o| o[:quantity]}.to_json%>,
+    series: <%=raw [@persons.map{|o| o[:quantity]}].to_json%>,
     labels: <%=raw @persons.map{|o| o[:name]}.to_json%>
-  }, {
-    distributeSeries: true,
-    fullWidth: true
   });
 </script>
 <% end %>
