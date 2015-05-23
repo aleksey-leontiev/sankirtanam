@@ -21,18 +21,20 @@ module Statistics::ReportsHelper
     data.map { |obj| obj[:quantity] }.to_json
   end
 
-  def overall_chart_data(data)
-    labels = [0] * 12 * 4
+  def overall_chart_data(data, years)
+    z = @current_year - years + 1
+    labels = [0] * 12 * years
     [labels.each_with_index.map {
-      |o,i| (data.detect{ |x| (x[:month].to_i == i%12) && (x[:year].to_i == i/12+2013)} or {quantity:0})[:quantity]
+      |o,i| (data.detect{ |x| (x[:month].to_i == i%12) && (x[:year].to_i == i/12+z)} or {quantity:0})[:quantity]
     }].to_json
   end
 
-  def overall_chart_labels()
+  def overall_chart_labels(years)
+    z = @current_year - years + 1
     m = ["я", "ф", "м", "а", "м", "и", "и", "а", "с", "о", "н", "д"]
-    labels = [0] * 12 * 4
+    labels = [0] * 12 * years
     labels.each_with_index.map {
-      |o,i| i%12 == 0 ? i/12+2013 : m[i%12]
+      |o,i| i%12 == 0 ? i/12+z : m[i%12]
     }.to_json
   end
 
