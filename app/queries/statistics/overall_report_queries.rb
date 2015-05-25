@@ -1,4 +1,7 @@
 module Statistics::OverallReportQueries
+  # returns data for overall report
+  #
+  # { date, year, month, quantity, location: { name, url }, person: { id, name } }
   def overall_report_data
     StatisticRecord
       .includes{person}
@@ -18,14 +21,14 @@ module Statistics::OverallReportQueries
     } }
   end
 
-  #
+  # returns data for chart
   def overall_report_chart_data(data)
-    data.group_by { |obj| # group by location
+    data.group_by { |obj| # group by date
       obj[:date]
-    }.map { |obj| # map to { location:"", data:[], quantity:00 }
-      { date: obj[0],
-        quantity: obj[1].sum{ |l| l[:quantity] } }
-    }.sort_by{ |x|
+    }.map { |obj|  # map to { date:"", quantity:[0, 0, 0] }
+      { date:     obj[0],
+        quantity: obj[1].sum{ |x| x[:quantity] } }
+    }.sort_by{ |x| # sort by date
       x[:date]
     }
   end
@@ -33,32 +36,32 @@ module Statistics::OverallReportQueries
   def overall_report_locations_data(data)
     data.group_by { |obj| # group by location
       obj[:location]
-    }.map { |obj| # map to { location:"", data:[], quantity:00 }
+    }.map { |obj| # map to { location:"", quantity:{ overall, by_year:[{year, quantity}] }
       { location: obj[0],
         quantity: { overall: obj[1].sum{ |l| l[:quantity]},
                     by_year: obj[1].group_by { |g| g[:year] }
                                    .map{ |y| {year: y[0], quantity: y[1].sum{|l| l[:quantity]}} }
                   } }
-    }.sort_by { |obj|
+    }.sort_by { |obj| # sort by overall quantity
       obj[:quantity][:overall]
     }.reverse
   end
 
   def overall_report_persons_data(data)
-    data.group_by { |obj| # group by location
+    data.group_by { |obj| # group by person
       obj[:person]
-    }.map { |obj| # map to { location:"", data:[], quantity:00 }
+    }.map { |obj| # map to { person, quantity:{ overall, by_year:[{year, quantity}] }
       { person: obj[0],
         quantity: { overall: obj[1].sum{ |l| l[:quantity] },
                     by_year: obj[1].group_by { |g| g[:year] }
                                    .map{ |y| {year: y[0], quantity: y[1].sum{|l| l[:quantity]}} }
                   } }
-    }.sort_by { |obj|
+    }.sort_by { |obj| # sort by overall quantity
       obj[:quantity][:overall]
     }.reverse
   end
 
   def overall_report_all_quantity(data)
-    data.sum{|x| x[:quantity]}
+    data.sum{ |x| x[:quantity] }
   end
 end

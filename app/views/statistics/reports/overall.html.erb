@@ -107,8 +107,8 @@
 
 <script type="text/javascript">
   new Chartist.Bar('#quantity-chart', {
-    labels: <%= raw overall_chart_labels(@chart) %>,
-    series: <%= raw overall_chart_data(@chart, 3) %>
+    labels: <%= raw overall_chart_labels(@overall) %>,
+    series: <%= raw overall_chart_data(@overall, 3) %>
   });
 
   new Chartist.Bar('#distributors-chart', {

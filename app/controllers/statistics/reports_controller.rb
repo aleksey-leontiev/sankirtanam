@@ -7,12 +7,12 @@ class Statistics::ReportsController < ApplicationController
 
   # overall report
   def overall
-    @data       = overall_report_data
-    @chart      = overall_report_chart_data(@data)
-    @locations  = overall_report_locations_data(@data)
-    @persons    = overall_report_persons_data(@data)
-    @quantity   = overall_report_all_quantity(@data)
-    @years      = @data.uniq{|x| x[:year]}.map{|x|x[:year]}
+    data        = overall_report_data
+    @overall    = overall_report_chart_data(data)
+    @locations  = overall_report_locations_data(data)
+    @persons    = overall_report_persons_data(data)
+    @quantity   = overall_report_all_quantity(data)
+    @years      = data.uniq{ |x| x[:year] }.map{ |x|x[:year] }
   end
 
   # annual report
