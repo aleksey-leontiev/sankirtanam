@@ -1,8 +1,23 @@
+<% if @select then %>
+
+<div class="list-group">
+  <% for location in @person %>
+    <div class="list-group-item active">
+      <%= location[0] %>
+    </div>
+
+    <% for person in location[1] %>
+      <a href="<%=statistics_reports_personal_path(person[:id], person[:name])%>" class="list-group-item"><%=person[:name]%></a>
+    <% end %>
+  <% end %>
+</div>
+
+<% else %>
 <% if @no_data then %>
 <div class="jumbotron">
-  <h1>Годовой отчет за <%=@year%> год</h1>
+  <h1>Личный отчет</h1>
   <p class="lead">
-    Отображает общее количество распространненых книг по всем локациям за <%=@year%> год.
+    Отображает общее количество распространненых книг.
   </p>
 </div>
 <div class="alert alert-danger" role="alert">За данный период данных нет.</div>
@@ -51,4 +66,5 @@
     series: <%= raw overall_chart_data(@table_data, 3) %>
   });
 </script>
+<% end %>
 <% end %>

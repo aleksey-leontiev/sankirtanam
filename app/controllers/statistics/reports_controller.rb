@@ -7,11 +7,12 @@ class Statistics::ReportsController < ApplicationController
 
   # overall report
   def overall
-    @data       = overall_report_chart_data
-    @locations  = overall_report_locations_data
-    @persons    = overall_report_persons_data
-    @quantity   = overall_report_all_quantity
-    @years      = [@current_year-3, @current_year-2, @current_year-1, @current_year]
+    @data       = overall_report_data
+    @chart      = overall_report_chart_data(@data)
+    @locations  = overall_report_locations_data(@data)
+    @persons    = overall_report_persons_data(@data)
+    @quantity   = overall_report_all_quantity(@data)
+    @years      = @data.uniq{|x| x[:year]}.map{|x|x[:year]}
   end
 
   # annual report
@@ -82,13 +83,17 @@ class Statistics::ReportsController < ApplicationController
     # get input parameters
     param_id = params[:id]
 
-    @person = Person.find_by_id(param_id)
+    if param_id then
+      @person = Person.find_by_id(param_id)
 
-    # chart data
-    @chart_data = personal_report_chart_data(param_id)
-    @table_data = personal_report_data(param_id)
-    @overall_quantity = @table_data.map {|o| o[:quantity]}.inject(:+)
-
-    @no_data = @chart_data.length == 0
+      # chart data
+      @chart_data = personal_report_chart_data(param_id)
+      @table_data = personal_report_data(param_id)
+      @overall_quantity = @table_data.map {|o| o[:quantity]}.inject(:+)
+      @no_data = (@person == nil)
+    else
+      @select = true
+      @person = persons
+    end
   end
 end

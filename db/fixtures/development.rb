@@ -14,7 +14,7 @@ Person.seed(:id,
   { :id => 8, :name => "Ачьюта Гаура дас", :location_id => 3},
   { :id => 9, :name => "Петр", :location_id => 3})
 
-for year in 2013..2016 do
+for year in 2013..2015 do
   for month in 1..12 do
     if month % 2 == 0 then next end
 

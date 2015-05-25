@@ -1,0 +1,3 @@
+module Statistics::Queries
+
+end

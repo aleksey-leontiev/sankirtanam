@@ -37,17 +37,19 @@
 			<tr>
 			  <!-- location name -->
 				<td>
-				  <a href="<%=statistics_reports_location_path(row[:location_url], @current_year)%>">
-				    <%=row[:location_name]%>
+				  <a href="<%=statistics_reports_location_path(row[:location][:url], @current_year)%>">
+				    <%=row[:location][:name]%>
 				  </a>
 				</td>
 
 				<!-- quantity and scores -->
-				<td><%=row[:quantity]%></td>
+				<td><%=row[:quantity][:overall]%></td>
 
 				<!-- quantity by year -->
-				<% row[:data].each do |quantity| %>
-		      <td><%=quantity%></td>
+				<% @years.each do |year| %>
+					<td>
+						<%= (row[:quantity][:by_year].detect{|x| x[:year] == year} or {quantity:0})[:quantity] %>
+		      </td>
 		    <% end %>
 			</tr>
 		<% end %>
@@ -81,12 +83,15 @@
 		<% @persons.each do |row|  %>
 			<tr>
 			  <td>
-			  	<a href="<%=statistics_reports_personal_path(row[:person_id], row[:name])%>"><%=row[:name]%></a>
+			  	<a href="<%=statistics_reports_personal_path(row[:person][:id], row[:person][:name])%>"><%=row[:person][:name]%></a>
 			  </td>
-				<td><%=row[:location]%></td>
-				<td><%=row[:quantity]%></td>
-			  <% row[:data].each do |quantity| %>
-		      <td><%=quantity%></td>
+				<td><%=row[:person][:location][:name]%></td>
+				<td><%=row[:quantity][:overall]%></td>
+			  <!-- quantity by year -->
+				<% @years.each do |year| %>
+					<td>
+						<%= (row[:quantity][:by_year].detect{|x| x[:year] == year} or {quantity:0})[:quantity] %>
+		      </td>
 		    <% end %>
 			</tr>
 		<% end %>
@@ -102,12 +107,12 @@
 
 <script type="text/javascript">
   new Chartist.Bar('#quantity-chart', {
-    labels: <%= raw overall_chart_labels(3) %>,
-    series: <%= raw overall_chart_data(@data, 3) %>
+    labels: <%= raw overall_chart_labels(@chart) %>,
+    series: <%= raw overall_chart_data(@chart, 3) %>
   });
 
   new Chartist.Bar('#distributors-chart', {
-    labels: <%= raw @persons.map { |o| o[:name] }.to_json %>,
-    series: <%= raw [@persons.map { |o| o[:quantity] }].to_json %>
+    labels: <%= raw @persons.map { |o| o[:person][:name] }.to_json %>,
+    series: <%= raw [@persons.map { |o| o[:quantity][:overall] }].to_json %>
   });
 </script>

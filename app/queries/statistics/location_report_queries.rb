@@ -14,7 +14,7 @@ module Statistics::LocationReportQueries
     ).map { |obj|
       { quantity: obj["quantity"], month: obj["month"] }
     }.each { |o|
-      r[o[:month].to_i] = o[:quantity]
+      r[o[:month].to_i - 1] = o[:quantity]
     }
     r
   end
