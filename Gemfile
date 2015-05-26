@@ -32,6 +32,7 @@ gem 'bundler', '>= 1.8.4'
 gem 'squeel'
 
 gem 'nprogress-rails'
+gem 'devise-bootstrap-views'
 
 source 'https://rails-assets.org' do
   gem 'rails-assets-bootstrap'

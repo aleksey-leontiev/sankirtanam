@@ -4,6 +4,8 @@ class Statistics::ReportsController < ApplicationController
   include Statistics::LocationReportQueries
   include Statistics::MonthlyReportQueries
   include Statistics::PersonalReportQueries
+  
+  before_action :authenticate_user!, only: [:new]
 
   # overall report
   def overall
