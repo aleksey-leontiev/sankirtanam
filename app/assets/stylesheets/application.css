@@ -29,6 +29,7 @@ body {
   margin-bottom: 20px;
 }
 
+
 /* Main marketing message and sign up button */
 .jumbotron {
   text-align: center;
@@ -38,9 +39,6 @@ body {
 .report-drop-box {
     text-align: center;
     outline: none;
-}
-
-.glyphicon-help {
 }
 
 #add-report-line:hover {

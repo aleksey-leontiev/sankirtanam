@@ -4,6 +4,11 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
 
   before_filter :set_time
+  before_filter :check_embedded
+
+  def check_embedded
+    @embedded = (params[:embedded] == 'true')
+  end
 
   def set_time
     @current_year = Time.now.year

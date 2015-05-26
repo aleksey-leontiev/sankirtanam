@@ -24,3 +24,12 @@
 //= require nprogress
 //= require nprogress-turbolinks
 //= require_tree .
+
+$(document).ready(function() {
+  var embedded = $('body').data("embedded");
+  if (embedded) {
+    return $("a").each(function() {
+      return $(this).attr("href", $(this).attr("href") + "?embedded=true");
+    });
+  }
+});
