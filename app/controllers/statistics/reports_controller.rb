@@ -87,12 +87,13 @@ class Statistics::ReportsController < ApplicationController
       @person = Person.find_by_id(param_id)
 
       # chart data
-      @chart_data = personal_report_chart_data(param_id)
-      @table_data = personal_report_data(param_id)
-      @overall_quantity = @table_data.map {|o| o[:quantity]}.inject(:+)
-      @no_data = (@person == nil)
+      data = personal_report_data(param_id)
+      @chart = personal_report_chart_data(data)
+      @table_data = personal_report_table_data(data)
+      @overall_quantity = @table_data.map {|o| o[:quantity][:overall]}.inject(:+)
+      @mode = (@person == nil || data.length == 0) ? "no_data" : "ok"
     else
-      @select = true
+      @mode = "select"
       @person = persons
     end
   end
