@@ -33,6 +33,8 @@ gem 'squeel'
 
 gem 'nprogress-rails'
 gem 'devise-bootstrap-views'
+gem 'capistrano', '~> 2.15.5'
+gem 'unicorn'
 
 source 'https://rails-assets.org' do
   gem 'rails-assets-bootstrap'
