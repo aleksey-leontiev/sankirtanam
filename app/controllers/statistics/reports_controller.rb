@@ -4,7 +4,7 @@ class Statistics::ReportsController < ApplicationController
   include Statistics::LocationReportQueries
   include Statistics::MonthlyReportQueries
   include Statistics::PersonalReportQueries
-  
+
   before_action :authenticate_user!, only: [:new]
 
   # overall report
@@ -15,6 +15,7 @@ class Statistics::ReportsController < ApplicationController
     @persons    = overall_report_persons_data(data)
     @quantity   = overall_report_all_quantity(data)
     @years      = data.uniq{ |x| x[:year] }.map{ |x|x[:year] }
+    @mode       = data.length == 0 ? "no_data" : "ok"
   end
 
   # annual report
@@ -31,7 +32,7 @@ class Statistics::ReportsController < ApplicationController
     @persons    = annual_report_persons_data(@year)
     @quantity   = annual_report_all_quantity(@year)
 
-    @no_data = @chart_data.length == 0
+    @no_data = @locations.length == 0
   end
 
   # location report

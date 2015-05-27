@@ -19,8 +19,9 @@ Rails.application.routes.draw do
     get 'reports/personal/:id-:name' => 'reports#personal', as: :reports_personal
   end
 
-
   devise_for :users
+
+  root 'statistics/reports#overall'
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

@@ -1,118 +1,129 @@
-<!-- overall report introduction -->
-<div class="jumbotron">
-  <h1>Суммарный отчет</h1>
-  <p class="lead">
-    Отображает общее количество распространненых книг по всем локациям за все время.
-    За всё время было распространено книг <%= @quantity %>.
-    Тройка самых активных локаций: <%= most_active_locations(@locations) %>.
-    Больше всего книг распространили: <%= most_active_persons(@persons) %>.
-  </p>
-</div>
-
-<!-- overall chart and table -->
-<div class="panel panel-default">
-  <div class="panel-heading">
-  	Общее количество распространненых книг по всем локациям за все время
-  </div>
-  <div class="panel-body">
-    <div id="quantity-chart" class="ct-chart ct-double-octave"></div>
-  </div>
-
-	<table id="table" class="table">
-		<!-- table header -->
-		<tr>
-			<th>Локация</th>
-			<th>Книги</th>
-			<% @years.each do |year| %>
-			  <th>
-			    <a href="<%=statistics_reports_annual_path(year)%>">
-			      <%=year%>
-			     </a>
-			  </th>
-			<% end %>
-		</tr>
-
-		<!-- table rows -->
-		<% @locations.each do |row|  %>
-			<tr>
-			  <!-- location name -->
-				<td>
-				  <a href="<%=statistics_reports_location_path(row[:location][:url], @current_year)%>">
-				    <%=row[:location][:name]%>
-				  </a>
-				</td>
-
-				<!-- quantity and scores -->
-				<td><%=row[:quantity][:overall]%></td>
-
-				<!-- quantity by year -->
-				<% @years.each do |year| %>
-					<td>
-						<%= (row[:quantity][:by_year].detect{|x| x[:year] == year} or {quantity:0})[:quantity] %>
-		      </td>
-		    <% end %>
-			</tr>
-		<% end %>
-	</table>
-
-	<div class="panel-footer">
-    Книг: <%= @quantity %>;
-    Локаций: <%= @locations.count %>;
+<% if @mode == "ok" %>
+	<!-- overall report introduction -->
+	<div class="jumbotron">
+	  <h1>Суммарный отчет</h1>
+	  <p class="lead">
+	    Отображает общее количество распространненых книг по всем локациям за все время.
+	    За всё время было распространено книг <%= @quantity %>.
+	    Тройка самых активных локаций: <%= most_active_locations(@locations) %>.
+	    Больше всего книг распространили: <%= most_active_persons(@persons) %>.
+	  </p>
 	</div>
-</div>
 
-<!-- overall by person -->
-<div class="panel panel-default">
-  <div class="panel-heading">Общее количество распространненых книг по распространителям</div>
-  <div class="panel-body">
-    <div id="distributors-chart" class="ct-chart ct-double-octave"></div>
-  </div>
+	<!-- overall chart and table -->
+	<div class="panel panel-default">
+	  <div class="panel-heading">
+	  	Общее количество распространненых книг по всем локациям за все время
+	  </div>
+	  <div class="panel-body">
+	    <div id="quantity-chart" class="ct-chart ct-double-octave"></div>
+	  </div>
 
-	<table id="table" class="table">
-		<!-- table header -->
-		<tr>
-		  <th>Имя</th>
-			<th>Локация</th>
-			<th>Книги</th>
-			<% @years.each do |year| %>
-	      <th><%=year%></th>
-			<% end %>
-		</tr>
-
-		<!-- person rows -->
-		<% @persons.each do |row|  %>
+		<table id="table" class="table">
+			<!-- table header -->
 			<tr>
-			  <td>
-			  	<a href="<%=statistics_reports_personal_path(row[:person][:id], row[:person][:name])%>"><%=row[:person][:name]%></a>
-			  </td>
-				<td><%=row[:person][:location][:name]%></td>
-				<td><%=row[:quantity][:overall]%></td>
-			  <!-- quantity by year -->
+				<th>Локация</th>
+				<th>Книги</th>
 				<% @years.each do |year| %>
-					<td>
-						<%= (row[:quantity][:by_year].detect{|x| x[:year] == year} or {quantity:0})[:quantity] %>
-		      </td>
-		    <% end %>
+				  <th>
+				    <a href="<%=statistics_reports_annual_path(year)%>">
+				      <%=year%>
+				     </a>
+				  </th>
+				<% end %>
 			</tr>
-		<% end %>
-	</table>
 
-	<div class="panel-footer">
-    Человек: <%= @persons.count %>;
-    Книг:    <%= @quantity %>;
-    Локаций: <%= @locations.count  %>;
+			<!-- table rows -->
+			<% @locations.each do |row|  %>
+				<tr>
+				  <!-- location name -->
+					<td>
+					  <a href="<%=statistics_reports_location_path(row[:location][:url], @current_year)%>">
+					    <%=row[:location][:name]%>
+					  </a>
+					</td>
+
+					<!-- quantity and scores -->
+					<td><%=row[:quantity][:overall]%></td>
+
+					<!-- quantity by year -->
+					<% @years.each do |year| %>
+						<td>
+							<%= (row[:quantity][:by_year].detect{|x| x[:year] == year} or {quantity:0})[:quantity] %>
+			      </td>
+			    <% end %>
+				</tr>
+			<% end %>
+		</table>
+
+		<div class="panel-footer">
+	    Книг: <%= @quantity %>;
+	    Локаций: <%= @locations.count %>;
+		</div>
 	</div>
-</div>
+
+	<!-- overall by person -->
+	<div class="panel panel-default">
+	  <div class="panel-heading">Общее количество распространненых книг по распространителям</div>
+	  <div class="panel-body">
+	    <div id="distributors-chart" class="ct-chart ct-double-octave"></div>
+	  </div>
+
+		<table id="table" class="table">
+			<!-- table header -->
+			<tr>
+			  <th>Имя</th>
+				<th>Локация</th>
+				<th>Книги</th>
+				<% @years.each do |year| %>
+		      <th><%=year%></th>
+				<% end %>
+			</tr>
+
+			<!-- person rows -->
+			<% @persons.each do |row|  %>
+				<tr>
+				  <td>
+				  	<a href="<%=statistics_reports_personal_path(row[:person][:id], row[:person][:name])%>"><%=row[:person][:name]%></a>
+				  </td>
+					<td><%=row[:person][:location][:name]%></td>
+					<td><%=row[:quantity][:overall]%></td>
+				  <!-- quantity by year -->
+					<% @years.each do |year| %>
+						<td>
+							<%= (row[:quantity][:by_year].detect{|x| x[:year] == year} or {quantity:0})[:quantity] %>
+			      </td>
+			    <% end %>
+				</tr>
+			<% end %>
+		</table>
+
+		<div class="panel-footer">
+	    Человек: <%= @persons.count %>;
+	    Книг:    <%= @quantity %>;
+	    Локаций: <%= @locations.count  %>;
+		</div>
+	</div>
 
 
-<script type="text/javascript">
-  new Chartist.Bar('#quantity-chart', {
-    labels: <%= raw overall_chart_labels(@overall) %>,
-    series: <%= raw overall_chart_data(@overall) %>
-  });
+	<script type="text/javascript">
+	  new Chartist.Bar('#quantity-chart', {
+	    labels: <%= raw overall_chart_labels(@overall) %>,
+	    series: <%= raw overall_chart_data(@overall) %>
+	  });
 
-  new Chartist.Bar('#distributors-chart', {
-    labels: <%= raw @persons.map { |o| o[:person][:name] }.to_json %>,
-    series: <%= raw [@persons.map { |o| o[:quantity][:overall] }].to_json %>
-  });
-</script>
+	  new Chartist.Bar('#distributors-chart', {
+	    labels: <%= raw @persons.map { |o| o[:person][:name] }.to_json %>,
+	    series: <%= raw [@persons.map { |o| o[:quantity][:overall] }].to_json %>
+	  });
+	</script>
+<% else %>
+	<!-- overall report introduction -->
+	<div class="jumbotron">
+		<h1>Суммарный отчет</h1>
+		<p class="lead">
+			Отображает общее количество распространненых книг по всем локациям за все время.
+		</p>
+	</div>
+	<div class="alert alert-danger" role="alert">За данный период данных нет.</div>
+<% end %>

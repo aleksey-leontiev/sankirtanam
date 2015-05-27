@@ -58,6 +58,7 @@ ru:
         sign_in: "Войти"
       user:
         signed_in: "Успешно авторизованы"
+        signed_out: "Успешно вышли"
     shared:
       links:
         back:
