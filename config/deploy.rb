@@ -19,7 +19,9 @@ require 'bundler/capistrano'
 after "deploy:update_code", :copy_database_config
 task :copy_database_config, roles => :app do
   db_config = "#{shared_path}/database.yml"
+  sc_config = "#{shared_path}/secrets.yml"
   run "cp #{db_config} #{release_path}/config/database.yml"
+  run "cp #{sc_config} #{release_path}/config/secrets.yml"
 end
 
 # В rails 3 по умолчанию включена функция assets pipelining,
