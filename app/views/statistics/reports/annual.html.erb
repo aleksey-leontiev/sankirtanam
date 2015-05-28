@@ -29,12 +29,16 @@
 			<th>01</th><th>02</th><th>03</th><th>04</th><th>05</th><th>06</th>
 			<th>07</th><th>08</th><th>09</th><th>10</th><th>11</th><th>12</th>
 		</tr>
-		<% @locations.each do |location|  %>
+
+		<% @locations.each do |row|  %>
 		  <tr>
-		    <td><a href="<%=statistics_reports_location_path(location[:location_url], @year)%>"><%=location[:location]%></a></td>
-		    <td><%=location[:quantity]%></td>
-		    <% location[:data].each do |data| %>
-			      <td><%=data%></td>
+		    <td><a href="<%=statistics_reports_location_path(row[:location][:url], @year)%>"><%=row[:location][:name]%></a></td>
+		    <td><%=row[:quantity][:overall]%></td>
+		    <!-- quantity by month -->
+				<% @months.each do |month| %>
+					<td>
+						<%= (row[:quantity][:by_month].detect{|x| x[:month] == month} or {quantity:0})[:quantity] %>
+		      </td>
 		    <% end %>
 		  </tr>
 		<% end %>
@@ -60,15 +64,18 @@
 			<th>01</th><th>02</th><th>03</th><th>04</th><th>05</th><th>06</th>
 			<th>07</th><th>08</th><th>09</th><th>10</th><th>11</th><th>12</th>
 		</tr>
-		<% @persons.each do |person|  %>
+		<% @persons.each do |row|  %>
 		  <tr>
 		    <td>
-		      <a href="<%=statistics_reports_personal_path(person[:person_id], person[:name])%>"><%=person[:name]%></a>
+		      <a href="<%=statistics_reports_personal_path(row[:person][:id], row[:person][:name])%>"><%=row[:person][:name]%></a>
 		    </td>
-		    <td><%=person[:location]%></td>
-		    <td><%=person[:quantity]%></td>
-		    <% person[:data].each do |data| %>
-			      <td><%=data%></td>
+		    <td><%=row[:person][:location][:name]%></td>
+		    <td><%=row[:quantity][:overall]%></td>
+		    <!-- quantity by month -->
+				<% @months.each do |month| %>
+					<td>
+						<%= (row[:quantity][:by_month].detect{|x| x[:month] == month} or {quantity:0})[:quantity] %>
+		      </td>
 		    <% end %>
 		  </tr>
 		<% end %>
@@ -93,12 +100,12 @@
 <script type="text/javascript">
   new Chartist.Bar('#quantity-chart', {
     labels: ["янв", "фев", "март", "апр", "май", "июнь", "июль", "авг", "сент", "окт", "ноя", "дек"],
-    series: [<%= @chart_data %>]
+    series: <%= annual_chart_data(@chart_data) %>
   });
 
   new Chartist.Bar('#distributors-chart', {
-    series: <%=raw [@persons.map{|o| o[:quantity]}].to_json%>,
-    labels: <%=raw @persons.map{|o| o[:name]}.to_json%>
+    labels: <%= raw @persons.map { |o| o[:person][:name] }.to_json %>,
+    series: <%= raw [@persons.map { |o| o[:quantity][:overall] }].to_json %>
   });
 </script>
 <% end %>

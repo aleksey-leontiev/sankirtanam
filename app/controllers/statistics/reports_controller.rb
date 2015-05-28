@@ -27,10 +27,12 @@ class Statistics::ReportsController < ApplicationController
     @year = param_year.to_i
 
     #
-    @chart_data = annual_report_chart_data(@year)
-    @locations  = annual_report_locations_data(@year)
-    @persons    = annual_report_persons_data(@year)
-    @quantity   = annual_report_all_quantity(@year)
+    data        = annual_report_data(@year)
+    @chart_data = annual_report_chart_data(data)
+    @locations  = annual_report_locations_data(data)
+    @persons    = annual_report_persons_data(data)
+    @quantity   = annual_report_all_quantity(data)
+    @months     = [1,2,3,4,5,6,7,8,9,10,11,12]
 
     @no_data = @locations.length == 0
   end
