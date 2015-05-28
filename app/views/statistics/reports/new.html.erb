@@ -16,7 +16,7 @@
     <!-- location component-->
     <div class="form-group">
       <label for="location">Локация</label>
-      <input id="location" class="form-control typeahead" type="text" placeholder="Локация" aria-describedby="location-help-block">
+      <input id="location" class="form-control typeahead" type="text" placeholder="Локация" aria-describedby="location-help-block" value="<%=user_access_location_name(current_user)%>">
       <span id="location-help-block" class="help-block">
         Введите название города или ашрама за который Вы отправляете отчет. Пример: "Санкт-Петербург", "Москва. Ашрам Бхактиведанты".
       </span>
@@ -146,7 +146,7 @@
       hideAlert($("#new-location-alert"));
       hideAlert($("#access-denied-alert"));
 
-      $.get("/api/statistics/permissions/canSendReport.json", {location:datum, user:"admin"}, function(data) {
+      $.get("/api/statistics/permissions/canSendReport.json", {location:datum}, function(data) {
         if (data.result == true) {
           if (data.newLocation == true) {
             showAlert($("#new-location-alert"));

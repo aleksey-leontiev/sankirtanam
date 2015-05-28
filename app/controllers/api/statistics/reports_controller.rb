@@ -1,4 +1,6 @@
 class Api::Statistics::ReportsController < ApplicationController
+  before_action :authenticate_user!
+
   # creates new report using specified location, date and report's data
   #
   # query parameters:
@@ -26,26 +28,37 @@ class Api::Statistics::ReportsController < ApplicationController
     # find or create objects
     date = Date.strptime(param_date, "%m/%Y")
     location = Location.where(
-      :name => param_location_name).first_or_create
-    report = StatisticReport.where(
-      :location => location,
-      :date => date).first_or_create
-    report.records.clear()
+      :name => param_location_name).first_or_create do |l|
+        UserLocationAccess.create(user: current_user, location: l)
+    end
 
-    # insert records to report
-    param_report.each do |row|
-      person = Person.where(
-        location: location,
-        name: row[1]["name"]).first_or_create
-      report.records << StatisticRecord.new(
-        :person => person,
-        :huge   => row[1]["huge"],
-        :big    => row[1]["big"],
-        :medium => row[1]["medium"],
-        :small  => row[1]["small"])
+    # check access rights
+    cid = current_user.id
+    rid = location.id
+    has_access = UserLocationAccess.where{
+      (user_id == cid)&(location_id == rid)}.first != nil
+
+    if has_access then
+      report = StatisticReport.where(
+        :location => location,
+        :date => date).first_or_create
+      report.records.clear()
+
+      # insert records to report
+      param_report.each do |row|
+        person = Person.where(
+          location: location,
+          name: row[1]["name"]).first_or_create
+        report.records << StatisticRecord.new(
+          :person => person,
+          :huge   => row[1]["huge"],
+          :big    => row[1]["big"],
+          :medium => row[1]["medium"],
+          :small  => row[1]["small"])
+      end
     end
 
     # render response
-    render json: { result: true }
+    render json: { result: has_access }
   end
 end

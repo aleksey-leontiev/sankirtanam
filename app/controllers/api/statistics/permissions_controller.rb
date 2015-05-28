@@ -1,4 +1,6 @@
 class Api::Statistics::PermissionsController < ApplicationController
+  before_action :authenticate_user!
+
   # check permission to send report for specified location, date and user
   #
   # query parameters:
@@ -28,16 +30,23 @@ class Api::Statistics::PermissionsController < ApplicationController
     # get parameters
     param_location_name = params[:location]
     param_date          = params[:date]
-    param_user          = params[:user]
 
     # response
-    response_result       = (param_user == "admin") # todo: check for real user
+    response_result       = true
     response_new_location = false
     response_report_exist = false
 
     # check location existence
     report_location = Location.find_by_name(param_location_name)
     report_date     = Date.strptime(param_date, "%m/%Y") if param_date != nil
+
+    # check access rights
+    if report_location != nil then
+      cid = current_user.id
+      rid = report_location.id
+      response_result = UserLocationAccess.where{
+        (user_id == cid)&(location_id == rid)}.first != nil
+    end
 
     # set response variables
     if report_location != nil && report_date != nil then
@@ -51,9 +60,13 @@ class Api::Statistics::PermissionsController < ApplicationController
     end
 
     # render json response
-    render json: {
-      result: response_result,
-      newLocation: response_new_location,
-      reportExist: response_report_exist }
+    if response_result then
+      render json: {
+        result: response_result,
+        newLocation: response_new_location,
+        reportExist: response_report_exist }
+    else
+      render json: { result: response_result }
+    end
   end
 end
