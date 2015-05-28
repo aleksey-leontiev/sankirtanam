@@ -1,81 +1,59 @@
 module Statistics::LocationReportQueries
+  # returns data for location report
   #
-  def location_report_chart_data(year, location_id)
-    r = [0,0,0,0,0,0,0,0,0,0,0,0]
+  # { date, year, month, quantity, location: { name, url }, person: { id, name } }
+  def location_report_data(year, id)
+    start = Date.new(year)
+    finish = Date.new(year, 12, 31)
+    StatisticRecord
+      .joins{report}
+      .includes{person}
+      .includes{report.location}
+      .includes{person.location}
+      .where{report.location_id == id}
+      .where{(report.date >= start) & (report.date <= finish)}
+      .map { |obj| {
+      date:       obj.report.date,
+      year:       obj.report.date.year,
+      month:      obj.report.date.month,
+      quantity: { overall: obj.huge + obj.big + obj.medium + obj.small,
+                  huge: obj.huge, big: obj.big, medium: obj.medium, small: obj.small },
+      location: { name: obj.report.location.name,
+                  url:  obj.report.location.url },
+      person:   { name: obj.person.name,
+                  id:   obj.person.id,
+                  location: { name: obj.person.location.name,
+                              id:   obj.person.location.id } }
+    } }
+  end
 
-    ActiveRecord::Base.connection.execute(
-      "select     strftime('%Y', date)       as year,  " +
-      "           strftime('%m', date)       as month, " +
-      "           sum(huge+big+medium+small) as quantity " +
-      "from       statistic_records rcd " +
-      "inner join statistic_reports rpt on rpt.id = rcd.statistic_report_id " +
-      "where      year = '#{year}' and rpt.location_id = '#{location_id}'" +
-      "group by   month"
-    ).map { |obj|
-      { quantity: obj["quantity"], month: obj["month"] }
-    }.each { |o|
-      r[o[:month].to_i - 1] = o[:quantity]
+  #
+  def location_report_chart_data(data)
+    data.group_by { |obj| # group by date
+      obj[:date]
+    }.map { |obj|  # map to { date:"", quantity:[0, 0, 0] }
+      { date:     obj[0],
+        quantity: obj[1].sum{ |x| x[:quantity][:overall] } }
+    }.sort_by{ |x| # sort by date
+      x[:date]
     }
-    r
   end
 
-  def location_report_locations_data(year, location_id)
-    ActiveRecord::Base.connection.execute(
-      "select strftime('%Y', date) as year, strftime('%m', date) as month, sum(huge+big+medium+small) as quantity, l.name as location " +
-      "from statistic_records rcd inner join statistic_reports rpt on rpt.id = rcd.statistic_report_id " +
-      "inner join locations l on l.id == rpt.location_id " +
-      "where year = '#{year}' and rpt.location_id = '#{location_id}'" +
-      "group by l.id, month order by l.id, month, quantity desc"
-    ).map { |obj| { # convert raw data
-        year: obj["year"],         month: obj["month"],
-        location: obj["location"], quantity: obj["quantity"] }
-    }.group_by { |obj| # group by location
-      obj[:location]
-    }.map { |obj| # map to { location:"", data:[], quantity:00 }
-      { location: obj[0],
-        data: [0,0,0,0,0,0,0,0,0,0,0,0].each_with_index.map {
-          |o,i| (obj[1].detect{ |x|x[:month].to_i == i+1}or{quantity:0})[:quantity]
-        }
-      }
-    }.map! { |obj| # inject quantity
-      obj[:quantity] = obj[:data].sum
-      obj
-    }.sort_by { |obj|
-      obj[:quantity]
+  def location_report_persons_data(data)
+    data.group_by { |obj| # group by person
+      obj[:person]
+    }.map { |obj| # map to { person, quantity:{ overall, by_year:[{year, quantity}] }
+      { person: obj[0],
+        quantity: { overall: obj[1].sum{ |l| l[:quantity][:overall] },
+                    by_month: obj[1].group_by { |g| g[:month] }
+                                   .map{ |y| {month: y[0], quantity: y[1].sum{|l| l[:quantity]}} }
+                  } }
+    }.sort_by { |obj| # sort by overall quantity
+      obj[:quantity][:overall]
     }.reverse
   end
 
-  def location_report_persons_data(year, location_id)
-    ActiveRecord::Base.connection.execute(
-      "select sum(huge+big+medium+small) quantity, p.name, p.id as person_id, l.name as location, strftime('%m', date) as month from statistic_records r " +
-      "inner join statistic_reports rpt on rpt.id = r.statistic_report_id " +
-      "inner join people    p on r.person_id   = p.id " +
-      "inner join locations l on p.location_id = l.id " +
-      "where strftime('%Y', date) = '#{year}' and rpt.location_id = '#{location_id}'" +
-      "group by p.id, month order by p.id, month asc, quantity desc"
-    ).map { |obj|
-      { name: obj["name"], quantity: obj["quantity"], location: obj["location"], month: obj["month"], person_id: obj["person_id"] }
-    }.group_by { |obj|
-      { name: obj[:name], location: obj[:location] }
-    }.map { |obj|
-      { name: obj[0][:name], location: obj[0][:location], person_id: obj[1][0][:person_id],
-        data: [0,0,0,0,0,0,0,0,0,0,0,0].each_with_index.map {
-          |o,i| (obj[1].detect{ |x|x[:month].to_i == i+1}or{quantity:0})[:quantity]
-        }
-      }
-    }.map! { |obj| # inject quantity
-      obj[:quantity] = obj[:data].sum
-      obj
-    }.sort_by { |obj|
-      obj[:quantity]
-    }.reverse
-  end
-
-  def location_report_all_quantity(year, location_id)
-    ActiveRecord::Base.connection.execute(
-      "select sum(huge+big+medium+small) as quantity from statistic_records r " +
-      "inner join statistic_reports rpt on rpt.id = r.statistic_report_id " +
-      "where strftime('%Y', date) = '#{year}' and rpt.location_id = '#{location_id}'"
-    )[0]["quantity"]
+  def location_report_all_quantity(data)
+    data.sum{ |x| x[:quantity][:overall] }
   end
 end

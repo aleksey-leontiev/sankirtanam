@@ -39,7 +39,7 @@ module Statistics::AnnualReportQueries
   end
 
   def annual_report_locations_data(data)
-     data.group_by { |obj| # group by location
+    data.group_by { |obj| # group by location
       obj[:location]
     }.map { |obj| # map to { location:"", quantity:{ overall, by_year:[{year, quantity}] }
       { location: obj[0],

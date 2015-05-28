@@ -1,20 +1,33 @@
 module Statistics::MonthlyReportQueries
+  # returns data for monthly report
   #
-  def monthly_report_persons_data(year, month, location_id)
-     ActiveRecord::Base.connection.execute(
-      "select huge+big+medium+small as quantity, p.name, p.id as person_id, r.huge, r.big, r.medium, r.small from statistic_records r " +
-      "inner join statistic_reports rpt on rpt.id = r.statistic_report_id " +
-      "inner join people    p on r.person_id   = p.id " +
-      "where strftime('%Y', date) = '#{year}' and rpt.location_id = '#{location_id}' and strftime('%m', date)='#{month}' " +
-      "order by quantity desc"
-    ).map { |obj|
-      { name: obj["name"], quantity: obj["quantity"], huge: obj["huge"], big: obj["big"], medium: obj["medium"], small: obj["small"], person_id: obj["person_id"] }
-    }
+  # { date, year, month, quantity, location: { name, url }, person: { id, name } }
+  def monthly_report_data(year, month, id)
+    start = Date.new(year, month)
+    finish = start.end_of_month
+    StatisticRecord
+      .joins{report}
+      .includes{person}
+      .includes{report.location}
+      .includes{person.location}
+      .where{report.location_id == id}
+      .where{(report.date >= start) & (report.date <= finish)}
+      .map { |obj| {
+      date:       obj.report.date,
+      year:       obj.report.date.year,
+      month:      obj.report.date.month,
+      quantity: { overall: obj.huge + obj.big + obj.medium + obj.small,
+                  huge: obj.huge, big: obj.big, medium: obj.medium, small: obj.small },
+      location: { name: obj.report.location.name,
+                  url:  obj.report.location.url },
+      person:   { name: obj.person.name,
+                  id:   obj.person.id,
+                  location: { name: obj.person.location.name,
+                              id:   obj.person.location.id } }
+    } }
   end
 
-  def monthly_report_all_quantity
-    ActiveRecord::Base.connection.execute(
-      "select sum(huge+big+medium+small) as quantity from statistic_records"
-    )[0]["quantity"]
+  def monthly_report_all_quantity(data)
+    data.sum{ |x| x[:quantity][:overall] }
   end
 end

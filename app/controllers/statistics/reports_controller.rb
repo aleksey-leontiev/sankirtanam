@@ -50,10 +50,11 @@ class Statistics::ReportsController < ApplicationController
       location_id = @location.id
 
       # chart data
-      @chart_data       = location_report_chart_data(param_year, location_id)
-      @locations        = location_report_locations_data(param_year, location_id)
-      @persons          = location_report_persons_data(param_year, location_id)
-      @overall_quantity = location_report_all_quantity(param_year, location_id)
+      data              = location_report_data(param_year.to_i, location_id)
+      @chart_data       = location_report_chart_data(data)
+      @persons          = location_report_persons_data(data)
+      @overall_quantity = location_report_all_quantity(data)
+      @months           = [1,2,3,4,5,6,7,8,9,10,11,12]
 
       @no_data = @chart_data.length == 0
     else
@@ -76,8 +77,8 @@ class Statistics::ReportsController < ApplicationController
     location_id = @location.id
 
     # active persons
-    @persons = monthly_report_persons_data(param_year, param_month, location_id)
-    @overall_quantity = @persons.map{|o| o[:quantity].to_i}.inject(:+)
+    @persons = monthly_report_data(param_year.to_i, param_month.to_i, location_id)
+    @overall_quantity = location_report_all_quantity(@persons)
 
     # no data found flag
     @no_data = @persons.length == 0
