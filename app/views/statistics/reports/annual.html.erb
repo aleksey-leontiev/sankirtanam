@@ -100,7 +100,7 @@
 <script type="text/javascript">
   new Chartist.Bar('#quantity-chart', {
     labels: ["янв", "фев", "март", "апр", "май", "июнь", "июль", "авг", "сент", "окт", "ноя", "дек"],
-    series: <%= annual_chart_data(@chart_data) %>
+    series: <%= chart_data(@data) %>
   });
 
   new Chartist.Bar('#distributors-chart', {

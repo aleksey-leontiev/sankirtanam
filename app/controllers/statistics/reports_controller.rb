@@ -4,13 +4,12 @@ class Statistics::ReportsController < ApplicationController
   # overall report
   def overall
     queries     = Statistics::OverallReportQueries.new
-    data        = queries.get_records()
-    @overall    = queries.overall_report_chart_data(data)
-    @locations  = queries.overall_report_locations_data(data)
-    @persons    = queries.overall_report_persons_data(data)
-    @quantity   = queries.overall_report_all_quantity(data)
-    @years      = data.uniq{ |x| x[:year] }.map{ |x|x[:year] }
-    @mode       = data.length == 0 ? "no_data" : "ok"
+    @data       = queries.get_records()
+    @locations  = queries.by_location(@data)
+    @persons    = queries.by_person(@data)
+    @quantity   = queries.overall_quantity(@data)
+    @years      = @data.uniq{ |x| x[:year] }.map{ |x|x[:year] }
+    @mode       = @data.length == 0 ? "no_data" : "ok"
   end
 
   # annual report
@@ -26,11 +25,10 @@ class Statistics::ReportsController < ApplicationController
 
     #
     queries     = Statistics::AnnualReportQueries.new
-    data        = queries.get_records(start, finish)
-    @chart_data = queries.annual_report_chart_data(data)
-    @locations  = queries.annual_report_locations_data(data)
-    @persons    = queries.annual_report_persons_data(data)
-    @quantity   = queries.annual_report_all_quantity(data)
+    @data       = queries.get_records(start_date: start, end_date: finish)
+    @locations  = queries.by_location(@data)
+    @persons    = queries.by_person(@data)
+    @quantity   = queries.overall_quantity(@data)
     @months     = [1,2,3,4,5,6,7,8,9,10,11,12]
 
     @no_data = @locations.length == 0
@@ -53,13 +51,12 @@ class Statistics::ReportsController < ApplicationController
 
       # chart data
       queries           = Statistics::LocationReportQueries.new
-      data              = queries.get_records(start, finish, location_id)
-      @chart_data       = queries.location_report_chart_data(data)
-      @persons          = queries.location_report_persons_data(data)
-      @overall_quantity = queries.location_report_all_quantity(data)
+      @data             = queries.get_records(start_date: start, end_date: finish, location_id: location_id)
+      @persons          = queries.by_person(@data)
+      @overall_quantity = queries.overall_quantity(@data)
       @months           = [1,2,3,4,5,6,7,8,9,10,11,12]
 
-      @no_data = @chart_data.length == 0
+      @no_data = @data.length == 0
     else
       @select_location = true
       @locations = Location.all.order(:name)
@@ -84,8 +81,9 @@ class Statistics::ReportsController < ApplicationController
 
     # active persons
     queries           = Statistics::MonthlyReportQueries.new
-    @persons = queries.get_records(start, finish, location_id)
-    @overall_quantity = queries.monthly_report_all_quantity(@persons)
+    @data          = queries.get_records(start_date: start, end_date: finish, location_id: location_id)
+    @persons = queries.by_person(@data)
+    @overall_quantity = queries.overall_quantity(@persons)
 
     # no data found flag
     @no_data = @persons.length == 0
@@ -101,9 +99,9 @@ class Statistics::ReportsController < ApplicationController
       @person = Person.find_by_id(param_id)
 
       # chart data
-      data = queries.get_records(nil, nil, nil, param_id)
-      @chart = queries.personal_report_chart_data(data)
-      @table_data = queries.personal_report_table_data(data)
+      data = queries.get_records(person_id: param_id)
+      @chart = data
+      @table_data = data.sort_by{ |x| x[:date] }
       @overall_quantity = @table_data.map {|o| o[:quantity][:overall]}.inject(:+)
       @mode = (@person == nil || data.length == 0) ? "no_data" : "ok"
     else

@@ -69,7 +69,7 @@
 		    <td><%=row[:quantity][:overall]%></td>
 		    <% @months.each do |month| %>
 					<td>
-						<%= (row[:quantity][:by_month].detect{|x| x[:month] == month} or {quantity:{overall:0}})[:quantity][:overall] %>
+						<%= (row[:quantity][:by_month].detect{|x| x[:month] == month} or {quantity:0})[:quantity] %>
 		      </td>
 		    <% end %>
 		  </tr>
@@ -93,7 +93,7 @@
 <script type="text/javascript">
   new Chartist.Bar('#quantity-chart', {
     labels: ["янв", "фев", "март", "апр", "май", "июнь", "июль", "авг", "сент", "окт", "ноя", "дек"],
-    series: <%= raw location_chart_data(@chart_data) %>
+    series: <%= raw chart_data(@data) %>
   });
 </script>
 <% end %>

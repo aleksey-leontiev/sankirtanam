@@ -105,11 +105,10 @@
 		</div>
 	</div>
 
-
 	<script type="text/javascript">
 	  new Chartist.Bar('#quantity-chart', {
-	    labels: <%= raw overall_chart_labels(@overall) %>,
-	    series: <%= raw overall_chart_data(@overall) %>
+	    labels: <%= raw chart_labels(@data) %>,
+	    series: <%= raw chart_data(@data) %>
 	  });
 
 	  new Chartist.Bar('#distributors-chart', {

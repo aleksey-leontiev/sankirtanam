@@ -64,8 +64,8 @@
 
     <script type="text/javascript">
       new Chartist.Bar('#quantity-chart', {
-        labels: <%= raw personal_chart_labels(@chart) %>,
-        series: <%= raw personal_chart_data(@chart) %>
+        labels: <%= raw chart_labels(@chart) %>,
+        series: <%= raw chart_data(@chart) %>
       });
     </script>
   <% end %>
