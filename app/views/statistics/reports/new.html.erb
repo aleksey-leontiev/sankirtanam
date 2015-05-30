@@ -205,7 +205,7 @@
 
     function processData(rawData) {
       var result = []
-      var rows   = rawData.split("\n");
+      var rows   = rawData.trim().split("\n"); // trim to avoid new line
 
       if (rawData == "" || rows[0] == "") return -2;
 
