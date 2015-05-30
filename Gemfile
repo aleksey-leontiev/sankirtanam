@@ -36,6 +36,7 @@ gem 'nprogress-rails'
 gem 'devise-bootstrap-views'
 gem 'capistrano', '~> 2.15.5'
 gem 'unicorn'
+gem 'reformal_turbolinks'
 
 source 'https://rails-assets.org' do
   gem 'rails-assets-bootstrap'

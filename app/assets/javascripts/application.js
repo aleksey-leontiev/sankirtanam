@@ -23,6 +23,7 @@
 //= require turbolinks
 //= require nprogress
 //= require nprogress-turbolinks
+//= require reformal_turbolinks
 //= require_tree .
 
 $(document).ready(function() {
