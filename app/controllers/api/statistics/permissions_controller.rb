@@ -44,8 +44,9 @@ class Api::Statistics::PermissionsController < ApplicationController
     if report_location != nil then
       cid = current_user.id
       rid = report_location.id
-      response_result = UserLocationAccess.where{
-        (user_id == cid)&(location_id == rid)}.first != nil
+      response_result =
+        current_user.admin? || (UserLocationAccess.where{
+          (user_id == cid) & (location_id == rid)}.first != nil)
     end
 
     # set response variables

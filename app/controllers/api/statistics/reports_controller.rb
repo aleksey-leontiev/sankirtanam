@@ -35,8 +35,8 @@ class Api::Statistics::ReportsController < ApplicationController
     # check access rights
     cid = current_user.id
     rid = location.id
-    has_access = UserLocationAccess.where{
-      (user_id == cid)&(location_id == rid)}.first != nil
+    has_access = current_user.admin? || (UserLocationAccess.where{
+      (user_id == cid)&(location_id == rid)}.first != nil)
 
     if has_access then
       report = StatisticReport.where(
