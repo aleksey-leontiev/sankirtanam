@@ -93,7 +93,7 @@
 <script type="text/javascript">
   new Chartist.Bar('#quantity-chart', {
     labels: ["янв", "фев", "март", "апр", "май", "июнь", "июль", "авг", "сент", "окт", "ноя", "дек"],
-    series: <%= raw chart_data(@data, 12) %>
+    series: <%= raw chart_data(@data, start: Date.new(@year), finish: Date.new(@year, 12, 31)) %>
   });
 </script>
 <% end %>

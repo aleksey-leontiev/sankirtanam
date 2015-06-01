@@ -8,7 +8,7 @@ class Statistics::ReportsController < ApplicationController
     @locations  = queries.by_location(@data)
     @persons    = queries.by_person(@data)
     @quantity   = queries.overall_quantity(@data)
-    @years      = @data.uniq{ |x| x[:year] }.map{ |x|x[:year] }
+    @years      = @data.uniq{ |x| x[:year] }.map{ |x|x[:year] }.sort
     @mode       = @data.length == 0 ? "no_data" : "ok"
   end
 
