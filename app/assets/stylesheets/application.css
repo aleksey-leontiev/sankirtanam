@@ -16,7 +16,7 @@
  *= require chartist
  *= require nprogress
  *= require nprogress-bootstrap
- *= require_tree .
+ *= require bootstrap-theme.css
  *= require_self
  */
 
