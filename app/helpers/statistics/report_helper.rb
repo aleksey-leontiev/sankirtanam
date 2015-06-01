@@ -1,6 +1,6 @@
 module Statistics::ReportHelper
   # returns data for chart
-  def chart_data(records)
+  def chart_data(records, count=0)
     #
     start_date = records.min_by{|x| x[:date]}[:date].beginning_of_month
     end_date   = records.max_by{|x| x[:date]}[:date].end_of_month
@@ -17,9 +17,11 @@ module Statistics::ReportHelper
     }
 
     #
-    [range.map{ |x|
+    result = range.map{ |x|
       (data.detect{ |y| y[:date].year == x.year && y[:date].month == x.month } or { quantity:0 })[:quantity]
-    }].to_json
+    }
+    result = result.fill(0, range.length...count) if count > 0
+    [result].to_json
   end
 
   # converts overall data for chart
@@ -49,5 +51,10 @@ module Statistics::ReportHelper
     range      = (start_date..end_date).select { |d| d.day == 1 }
 
     range.map{ |x| x.month == 1 ? x.year : months[x.month-1] }
+  end
+
+  def person_link(person_id, person_name)
+    name = ActiveSupport::Inflector::transliterate(person_name.downcase).gsub(/ /, "-")
+    statistics_reports_personal_path(person_id, name)
   end
 end

@@ -31,7 +31,7 @@
 		<% @persons.each do |row|  %>
 		  <tr>
 		    <td>
-		      <a href="<%=statistics_reports_personal_path(row[:person][:id], row[:person][:name])%>"><%=row[:person][:name]%></a>
+		      <a href="<%=person_link(row[:person][:id], row[:person][:name])%>"><%=row[:person][:name]%></a>
 		    </td>
 		    <td><%=row[:quantity][:overall]%></td>
 		    <td><%=row[:quantity][:huge]%></td>

@@ -64,7 +64,7 @@
 		<% @persons.each do |row|  %>
 		  <tr>
 		    <td>
-		      <a href="<%=statistics_reports_personal_path(row[:person][:id], row[:person][:name])%>"><%=row[:person][:name]%></a>
+		      <a href="<%=person_link(row[:person][:id], row[:person][:name])%>"><%=row[:person][:name]%></a>
 		    </td>
 		    <td><%=row[:quantity][:overall]%></td>
 		    <% @months.each do |month| %>
@@ -93,7 +93,7 @@
 <script type="text/javascript">
   new Chartist.Bar('#quantity-chart', {
     labels: ["янв", "фев", "март", "апр", "май", "июнь", "июль", "авг", "сент", "окт", "ноя", "дек"],
-    series: <%= raw chart_data(@data) %>
+    series: <%= raw chart_data(@data, 12) %>
   });
 </script>
 <% end %>

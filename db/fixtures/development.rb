@@ -4,7 +4,7 @@ Location.seed(:id,
   { :id => 3, :name => "Красноярск", :url => "krasnoyarsk" })
 
 Person.seed(:id,
-  { :id => 1, :name => "Варадеша дас", :location_id => 1},
+  { :id => 1, :name => "Варадеша-дас", :location_id => 1},
   { :id => 2, :name => "Ананта Кришна Госвами", :location_id => 1},
   { :id => 3, :name => "Клим", :location_id => 1},
   { :id => 4, :name => "Гададхара Прана дас", :location_id => 2},
@@ -12,10 +12,10 @@ Person.seed(:id,
   { :id => 6, :name => "Ачьютаградж дас", :location_id => 2},
   { :id => 7, :name => "Найка Говинда дас", :location_id => 3},
   { :id => 8, :name => "Ачьюта Гаура дас", :location_id => 3},
-  { :id => 9, :name => "Петр", :location_id => 3})
+  { :id => 9, :name => "Ананда-Гауранга дас", :location_id => 3})
 
 for year in 2014..2015 do
-  for month in 1..12 do
+  for month in 1..5 do
 
     report_id = "#{year}#{month}00".to_i
     record_id = "#{year}#{month}00".to_i
