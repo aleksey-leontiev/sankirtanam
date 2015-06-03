@@ -1,14 +1,11 @@
-ActiveAdmin.register Location do
-  permit_params :name, :url
-
-  menu label: "Локации"
+ActiveAdmin.register StatisticReport do
 
   index do
     selectable_column
-    column :name
+    column :location
+    column :date
     actions
   end
-
 # See permitted parameters documentation:
 # https://github.com/activeadmin/activeadmin/blob/master/docs/2-resource-customization.md#setting-up-strong-parameters
 #
