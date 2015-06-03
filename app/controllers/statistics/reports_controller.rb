@@ -3,13 +3,16 @@ class Statistics::ReportsController < ApplicationController
 
   # overall report
   def overall
-    queries     = Statistics::OverallReportQueries.new
-    @data       = queries.get_records()
-    @locations  = queries.by_location(@data)
-    @persons    = queries.by_person(@data)
-    @quantity   = queries.overall_quantity(@data)
-    @years      = @data.uniq{ |x| x[:year] }.map{ |x|x[:year] }.sort
-    @mode       = @data.length == 0 ? "no_data" : "ok"
+    queries = Statistics::OverallReportQueries.new
+    records = queries.get_records()
+
+    @data = {
+      records:     records,
+      by_location: queries.by_location(records),
+      by_person:   queries.by_person(records),
+      quantity:    queries.overall_quantity(records),
+      years:       queries.years(records) }
+    @mode = (records.length == 0 ? :no_data : :ok)
   end
 
   # annual report

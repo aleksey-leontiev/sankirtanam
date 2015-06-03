@@ -81,4 +81,8 @@ class Statistics::StatisticsQueries
     data.sum{ |x| x[:quantity][:overall] }
   end
 
+  def years(data)
+    data.uniq{|x|x[:year]}.map{|x|x[:year]}.sort
+  end
+
 end
