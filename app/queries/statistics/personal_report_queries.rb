@@ -5,6 +5,9 @@ class Statistics::PersonalReportQueries < Statistics::StatisticsQueries
       { id: obj.id, name: obj.name, location: obj.location.name }
     }.group_by { |obj|
       obj[:location]
+    }.map { |obj|
+      { location: obj[0],
+        persons:  obj[1].sort_by{ |o| o[:name] } }
     }
   end
 end

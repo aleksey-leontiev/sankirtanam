@@ -1,0 +1,21 @@
+<div class="jumbotron">
+  <h1>По распространителям</h1>
+  <p class="lead">
+    Выберите распространителя книг из списка.
+  </p>
+</div>
+
+<% for row in @person %>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <%= row[:location] %>
+    </div>
+
+    <div class="panel-body">
+      <% for person in row[:persons] %>
+        <a href="<%=statistics_reports_personal_path(person[:id], person[:name])%>">
+          <%=person[:name]%></a>,
+      <% end %>
+    </div>
+  </div>
+<% end %>

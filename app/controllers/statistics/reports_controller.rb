@@ -92,23 +92,22 @@ class Statistics::ReportsController < ApplicationController
     @no_data = @persons.length == 0
   end
 
-  # annual report
+  # personal report
+  # /statistics/reports/personal/:id-:name
   def personal
     # get input parameters
     param_id = params[:id]
-    queries = Statistics::PersonalReportQueries.new
+    queries  = Statistics::PersonalReportQueries.new
 
     if param_id then
       @person = Person.find_by_id(param_id)
 
       # chart data
-      data = queries.get_records(person_id: param_id)
-      @chart = data
-      @table_data = data.sort_by{ |x| x[:date] }
-      @overall_quantity = @table_data.map {|o| o[:quantity][:overall]}.inject(:+)
-      @mode = (@person == nil || data.length == 0) ? "no_data" : "ok"
+      @data     = queries.get_records(person_id: param_id, order: :date)
+      @quantity = @data.map { |o| o[:quantity][:overall] }.inject(:+)
+      @mode     = (@person == nil || @data.length == 0) ? :no_data : :ok
     else
-      @mode = "select"
+      @mode   = :select
       @person = queries.persons
     end
   end

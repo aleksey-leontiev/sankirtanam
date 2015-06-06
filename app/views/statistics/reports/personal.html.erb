@@ -1,72 +1,52 @@
-<% if @mode == "select" then %>
+<% if @mode == :select then %>
+  <%= render "persons_list" %>
 
-  <div class="list-group">
-    <% for location in @person %>
-      <div class="list-group-item active">
-        <%= location[0] %>
-      </div>
+<% elsif @mode == :no_data then %>
+  <%= render "no_data" %>
 
-      <% for person in location[1] %>
-        <a href="<%=statistics_reports_personal_path(person[:id], person[:name])%>" class="list-group-item"><%=person[:name]%></a>
-      <% end %>
-    <% end %>
+<% elsif @mode == :ok then %>
+  <div class="jumbotron">
+    <h1><%=@person.name%></h1>
+    <p class="lead">
+      Отображает общее количество распространненых книг.
+      Было распространено <%= @quantity %> книг за
+      <%= @data.length %> месяцев.
+    </p>
   </div>
 
-<% else %>
-
-  <% if @mode == "no_data" then %>
-
-    <div class="jumbotron">
-      <h1>Личный отчет</h1>
-      <p class="lead">
-        Отображает общее количество распространненых книг.
-      </p>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      Общее количество распространненых книг за все время
     </div>
-    <div class="alert alert-danger" role="alert">За данный период данных нет.</div>
-
-  <% else %>
-    <div class="jumbotron">
-      <h1><%=@person.name%></h1>
-      <p class="lead">
-        Отображает общее количество распространненых книг.
-        Было распространено <%= @overall_quantity %> книг.
-      </p>
+    <div class="panel-body">
+      <div id="quantity-chart" class="ct-chart ct-double-octave"></div>
     </div>
 
-    <div class="panel panel-default">
-      <div class="panel-heading">Общее количество распространненых книг по всем локациям за <%=@year%> год</div>
-      <div class="panel-body">
-        <div id="quantity-chart" class="ct-chart ct-double-octave"></div>
-      </div>
+  	<table id="table" class="table">
+  		<tr>
+  			<th>Дата</th>
+  			<th>Книги</th>
+  			<th>Махбиги</th><th>Биги</th><th>Средние</th><th>Малые</th>
+  		</tr>
+  		<% @data.each do |row|  %>
+  		  <tr class="<%=row_class(row)%>">
+  		    <td><%=row[:month]%>/<%=row[:year]%></td>
+  		    <% [:overall, :huge, :big, :medium, :small].each do |key| %>
+  		      <td><%=row[:quantity][key]%></td>
+  		    <% end %>
+  		  </tr>
+  		<% end %>
+  	</table>
 
-    	<table id="table" class="table">
-    		<tr>
-    			<th>Дата</th>
-    			<th>Книги</th>
-    			<th>Махбиги</th><th>Биги</th><th>Средние</th><th>Малые</th>
-    		</tr>
-    		<% @table_data.each do |row|  %>
-    		  <tr class="<%=row[:month].to_i == 1 ? 'warning' : '' %>">
-    		    <td><%=row[:month]%>/<%=row[:year]%></td>
-    		    <td><%=row[:quantity][:overall]%></td>
-    		    <td><%=row[:quantity][:huge]%></td>
-    		    <td><%=row[:quantity][:big]%></td>
-    		    <td><%=row[:quantity][:medium]%></td>
-    		    <td><%=row[:quantity][:small]%></td>
-    		  </tr>
-    		<% end %>
-    	</table>
+  	<div class="panel-footer">
+      Книг за период: <%= @quantity %>;
+  	</div>
+  </div>
 
-    	<div class="panel-footer">
-        Книг за период: <%= @overall_quantity %>;
-    	</div>
-    </div>
-
-    <script type="text/javascript">
-      new Chartist.Bar('#quantity-chart', {
-        labels: <%= raw chart_labels(@chart) %>,
-        series: <%= raw chart_data(@chart) %>
-      });
-    </script>
-  <% end %>
+  <script type="text/javascript">
+    new Chartist.Bar('#quantity-chart', {
+      labels: <%= raw chart_labels(@data) %>,
+      series: <%= raw chart_data(@data) %>
+    });
+  </script>
 <% end %>
