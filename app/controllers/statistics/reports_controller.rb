@@ -111,11 +111,12 @@ class Statistics::ReportsController < ApplicationController
       start_date = param_year && param_month ? Date.new(param_year.to_i, param_month.to_i) : nil
       end_date   = start_date != nil ? start_date.end_of_month : nil
 
-      @data     = queries.get_records(person_id: param_id, start_date: start_date, end_date: end_date, order: :date)
-      @quantity = @data.map { |o| o[:quantity][:overall] }.inject(:+)
-      @mode     = (@person == nil || @data.length == 0) ? :no_data : :ok
-      @types    = {huge: "Махабиги", big: "Большие", medium: "Средние", small: "Малые"}
-      @date     = "#{param_month}/#{param_year}"
+      @data      = queries.get_records(person_id: param_id, start_date: start_date, end_date: end_date, order: :date)
+      @quantity  = @data.map { |o| o[:quantity][:overall] }.inject(:+)
+      @mode      = (@person == nil || @data.length == 0) ? :no_data : :ok
+      @types     = {huge: "Махабиги", big: "Большие", medium: "Средние", small: "Малые"}
+      @date      = "#{param_month}/#{param_year}"
+      @huge_view = (param_month != nil) && (param_year != nil)
     else
       @mode   = :select
       @person = queries.persons
