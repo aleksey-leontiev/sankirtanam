@@ -51,8 +51,14 @@ module Statistics::ReportHelper
     range.map{ |x| x.month == 1 ? x.year : months[x.month-1] }
   end
 
-  def person_link(person_id, person_name)
-    name = ActiveSupport::Inflector::transliterate(person_name.downcase).gsub(/ /, "-")
-    statistics_reports_personal_path(person_id, name)
+  # returns link to personal report
+  def person_link(person_id, person_name, year: nil, month: nil)
+    name = ActiveSupport::Inflector::transliterate(person_name.downcase)
+      .gsub(/ /, "-").gsub(/\./, "").downcase
+    if year == nil && month == nil then
+      statistics_reports_personal_path(person_id, name)
+    else
+      statistics_reports_personal_month_path(person_id, name, year, month)
+    end
   end
 end

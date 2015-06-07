@@ -8,45 +8,56 @@
   <div class="jumbotron">
     <h1><%=@person.name%></h1>
     <p class="lead">
-      Отображает общее количество распространненых книг.
-      Было распространено <%= @quantity %> книг за
-      <%= @data.length %> месяцев.
+      <% if @data.length == 1 then %>
+        <%= @date %>
+      <% else %>
+        Отображает общее количество распространненых книг.
+        Было распространено <%= @quantity %> книг за
+        <%= @data.length %> месяцев.
+      <% end %>
     </p>
   </div>
 
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      Общее количество распространненых книг за все время
+  <% if @data.length == 1 then %>
+    <%= render "personal_month" %>
+
+  <% else %>
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        Общее количество распространненых книг за все время
+      </div>
+      <div class="panel-body">
+        <div id="quantity-chart" class="ct-chart ct-double-octave"></div>
+      </div>
+
+    	<table id="table" class="table">
+    		<tr>
+    			<th>Дата</th>
+    			<th>Книги</th>
+    			<th>Махбиги</th><th>Биги</th><th>Средние</th><th>Малые</th>
+    		</tr>
+    		<% @data.each do |row|  %>
+    		  <tr class="<%=row_class(row)%>">
+    		    <td>
+    		      <a href="<%=person_link(@person.id, @person.name, year: row[:year], month: row[:month])%>"><%=row[:month]%>/<%=row[:year]%></a>
+    		    </td>
+    		    <% [:overall, :huge, :big, :medium, :small].each do |key| %>
+    		      <td><%=row[:quantity][key]%></td>
+    		    <% end %>
+    		  </tr>
+    		<% end %>
+    	</table>
+
+    	<div class="panel-footer">
+        Книг за период: <%= @quantity %>;
+    	</div>
     </div>
-    <div class="panel-body">
-      <div id="quantity-chart" class="ct-chart ct-double-octave"></div>
-    </div>
 
-  	<table id="table" class="table">
-  		<tr>
-  			<th>Дата</th>
-  			<th>Книги</th>
-  			<th>Махбиги</th><th>Биги</th><th>Средние</th><th>Малые</th>
-  		</tr>
-  		<% @data.each do |row|  %>
-  		  <tr class="<%=row_class(row)%>">
-  		    <td><%=row[:month]%>/<%=row[:year]%></td>
-  		    <% [:overall, :huge, :big, :medium, :small].each do |key| %>
-  		      <td><%=row[:quantity][key]%></td>
-  		    <% end %>
-  		  </tr>
-  		<% end %>
-  	</table>
-
-  	<div class="panel-footer">
-      Книг за период: <%= @quantity %>;
-  	</div>
-  </div>
-
-  <script type="text/javascript">
-    new Chartist.Bar('#quantity-chart', {
-      labels: <%= raw chart_labels(@data) %>,
-      series: <%= raw chart_data(@data) %>
-    });
-  </script>
+    <script type="text/javascript">
+      new Chartist.Bar('#quantity-chart', {
+        labels: <%= raw chart_labels(@data) %>,
+        series: <%= raw chart_data(@data) %>
+      });
+    </script>
+  <% end %>
 <% end %>

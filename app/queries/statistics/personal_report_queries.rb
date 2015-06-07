@@ -8,6 +8,8 @@ class Statistics::PersonalReportQueries < Statistics::StatisticsQueries
     }.map { |obj|
       { location: obj[0],
         persons:  obj[1].sort_by{ |o| o[:name] } }
+    }.sort_by { |x|
+      x[:location]
     }
   end
 end

@@ -18,6 +18,7 @@ Rails.application.routes.draw do
     get 'reports/monthly/:location/:year-:month' => 'reports#monthly', as: :reports_monthly
     get 'reports/personal' => 'reports#personal', as: :reports_personal_select
     get 'reports/personal/:id-:name' => 'reports#personal', as: :reports_personal
+    get 'reports/personal/:id-:name/:year/:month' => 'reports#personal', as: :reports_personal_month
   end
 
   devise_for :users
