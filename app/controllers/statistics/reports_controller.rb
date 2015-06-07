@@ -3,6 +3,8 @@ class Statistics::ReportsController < ApplicationController
 
   # overall report
   def overall
+    @og_description = "Личный отчет"
+
     queries = Statistics::OverallReportQueries.new
     records = queries.get_records()
 
@@ -95,6 +97,8 @@ class Statistics::ReportsController < ApplicationController
   # personal report
   # /statistics/reports/personal/:id-:name
   def personal
+    @og_description = "Личный отчет"
+
     # get input parameters
     param_id    = params[:id]
     param_year  = params[:year]

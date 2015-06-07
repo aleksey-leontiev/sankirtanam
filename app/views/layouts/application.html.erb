@@ -6,8 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
+
+    <%= yield :meta %>
+
     <link rel="icon" href="../../favicon.ico">
-    <title>Sankirtanam.ru</title>
     <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
     <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
     <%= csrf_meta_tags %>
@@ -154,7 +156,7 @@
         script.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'media.reformal.ru/widgets/v3/reformal.js';
         document.getElementsByTagName('head')[0].appendChild(script);
     })();
-    </script><noscript><a href="http://reformal.ru"><img src="http://media.reformal.ru/reformal.png" /></a><a href="http://sankirtanam.reformal.ru">Oтзывы и предложения для Статистика санкиртаны</a></noscript>
+    </script><noscript><a href="http://reformal.ru"><img src="http://media.reformal.ru/reformal.png" alt="..." /></a><a href="http://sankirtanam.reformal.ru">Oтзывы и предложения для Статистика санкиртаны</a></noscript>
     <% end %>
   </body>
 </html>

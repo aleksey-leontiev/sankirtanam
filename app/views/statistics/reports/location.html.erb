@@ -1,3 +1,11 @@
+<%= content_for :meta do %>
+	<title>Годовой отчет о распространении книг по локации "<%=@location.name%>" за <%=@year%> год</title>
+	<meta property="og:title" content="Отчет о распространении книг по локации"/>
+  <meta property="og:site_name" content="sankirtanam.ru"/>
+  <meta property="og:description" content='Отображает общее количество распространненых книг по локации "<%=@location.name%>" за <%=@year%> год.'/>
+  <meta property="og:image" content="https://sankirtanam-aleksey-leontiev1.c9.io/sankirtanam-logo.png"/>
+<% end %>
+
 <% if @select_location %>
   <div class="jumbotron">
     <h1>Отчет по локации</h1>
@@ -98,3 +106,5 @@
 </script>
 <% end %>
 <% end %>
+
+<%= render "share" %>

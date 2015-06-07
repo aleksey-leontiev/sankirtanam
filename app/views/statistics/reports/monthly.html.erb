@@ -1,3 +1,11 @@
+<%= content_for :meta do %>
+	<title>Месячный отчет о распространении книг по локации "<%=@location.name%>" за <%=@month%>/<%=@year%></title>
+	<meta property="og:title" content="Отчет о распространении книг по локации"/>
+  <meta property="og:site_name" content="sankirtanam.ru"/>
+  <meta property="og:description" content='Отображает общее количество распространненых книг по локации "<%=@location.name%>" за <%=@month%>/<%=@year%>.'/>
+  <meta property="og:image" content="https://sankirtanam-aleksey-leontiev1.c9.io/sankirtanam-logo.png"/>
+<% end %>
+
 <% if @no_data then %>
 <div class="jumbotron">
   <h1>Месячный отчет. <%=@location.name%>, <%=@month%>/<%=@year%></h1>
@@ -72,3 +80,5 @@
   });
 </script>
 <% end %>
+
+<%= render "share" %>

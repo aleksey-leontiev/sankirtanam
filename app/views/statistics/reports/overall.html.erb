@@ -1,3 +1,11 @@
+<%= content_for :meta do %>
+	<title>Суммарный отчет о распространении книг</title>
+	<meta property="og:title" content="Суммарный отчет о распространении книг"/>
+  <meta property="og:site_name" content="sankirtanam.ru"/>
+  <meta property="og:description" content="Отображает общее количество распространненых книг по всем локациям за все время."/>
+  <meta property="og:image" content="https://sankirtanam-aleksey-leontiev1.c9.io/sankirtanam-logo.png"/>
+<% end %>
+
 <% if @mode == :ok %>
 	<!-- overall report introduction -->
 	<div class="jumbotron">
@@ -127,3 +135,5 @@
 	</div>
 	<div class="alert alert-danger" role="alert">За данный период данных нет.</div>
 <% end %>
+
+<%= render "share" %>
