@@ -97,8 +97,6 @@ class Statistics::ReportsController < ApplicationController
   # personal report
   # /statistics/reports/personal/:id-:name
   def personal
-    @og_description = "Личный отчет"
-
     # get input parameters
     param_id    = params[:id]
     param_year  = params[:year]

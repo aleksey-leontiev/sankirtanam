@@ -42,7 +42,7 @@ class Statistics::StatisticsQueries
     } }
 
     #map.sort{|x| x[:quantity][:overall] } if order == :overall_quantity
-    map.sort_by{|x| x[:date] } if order == :date
+    map = map.sort_by{|x| x[:date] } if order == :date
 
     map
   end
