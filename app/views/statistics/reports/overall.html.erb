@@ -65,7 +65,7 @@
 		</table>
 
 		<div class="panel-footer">
-	    Книг: <%= @quantity %>;
+	    Книг: <%= @data[:quantity] %>;
 	    Локаций: <%= @data[:by_location].count %>;
 		</div>
 	</div>
@@ -120,8 +120,8 @@
 	  });
 
 	  new Chartist.Bar('#distributors-chart', {
-	    labels: <%= raw @data[:by_person].map { |o| o[:person][:name] }.to_json %>,
-	    series: <%= raw [@data[:by_person].map { |o| o[:quantity][:overall] }].to_json %>
+	    labels: <%= raw @data[:by_person].take(15).map { |o| o[:person][:name] }.to_json %>,
+	    series: <%= raw [@data[:by_person].take(15).map { |o| o[:quantity][:overall] }].to_json %>
 	  });
 	</script>
 

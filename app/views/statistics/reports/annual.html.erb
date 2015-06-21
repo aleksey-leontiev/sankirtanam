@@ -112,8 +112,8 @@
   });
 
   new Chartist.Bar('#distributors-chart', {
-    labels: <%= raw @persons.map { |o| o[:person][:name] }.to_json %>,
-    series: <%= raw [@persons.map { |o| o[:quantity][:overall] }].to_json %>
+    labels: <%= raw @persons.take(15).map { |o| o[:person][:name] }.to_json %>,
+    series: <%= raw [@persons.take(15).map { |o| o[:quantity][:overall] }].to_json %>
   });
 </script>
 <% end %>
