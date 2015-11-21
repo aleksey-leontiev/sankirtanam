@@ -85,9 +85,9 @@ class Statistics::ReportsController < ApplicationController
     finish = start.end_of_month
 
     # active persons
-    queries           = Statistics::MonthlyReportQueries.new
-    @data          = queries.get_records(start_date: start, end_date: finish, location_id: location_id)
-    @persons = queries.by_person(@data)
+    queries   = Statistics::MonthlyReportQueries.new
+    @data     = queries.get_records(start_date: start, end_date: finish, location_id: location_id)
+    @persons  = queries.by_person(@data)
     @overall_quantity = queries.overall_quantity(@persons)
 
     # no data found flag
@@ -119,5 +119,21 @@ class Statistics::ReportsController < ApplicationController
       @mode   = :select
       @person = queries.persons
     end
+  end
+
+  def marathon
+    # get input parameters
+    param_year = params[:year].to_i
+    @year = param_year.to_i
+
+    queries = Statistics::MarathonReportQueries.new
+    start   = Date.new(@year, 12)
+    finish  = Date.new(@year, 12, 31)
+
+    @data    = queries.get_records(start_date: start, end_date: finish)
+    @persons = queries.by_person(@data)
+  end
+
+  def help
   end
 end

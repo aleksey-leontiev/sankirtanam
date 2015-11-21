@@ -44,7 +44,7 @@
       </span>
     </div>
     <div id="report-exist-alert" class="alert alert-warning hidden" role="alert">
-      <strong>Отчет уже есть!</strong> На данный период отчет уже существует.
+      <strong>Отчет уже существует!</strong> На данный период отчет уже существует.
       При сохранении этого отчета старый будет обновлен. Проверьте дату дважды.
     </div>
 
@@ -60,7 +60,12 @@
       </div>
     </div>
     <div id="incorrect-data-columns-error-alert" class="alert alert-danger hidden" role="alert">
-      <strong>Некорректные данные!</strong> Вставляемая таблица должна содержать пять колонок: имя, махабиги, биги, средние, малые. Колонки с количеством книг и очков компировать не нужно - они будут подсчитаны автоматически.
+      <strong>Некорректные данные!</strong> Вставляемая таблица должна содержать определённое количество колонок:
+        <ul>
+          <li><b>Месячный отчёт:</b> имя, махабиги, биги, средние, малые. Колонки с количеством книг и очков компировать не нужно - они будут подсчитаны автоматически.</li>
+          <li><b>Отчёт на марафон:</b> имя, количество книг, очки, 31 колонка по дням марафона.</li>
+        </ul>
+        <a href="<%=statistics_reports_help_path%>">Прочитать инструкцию</a>
     </div>
     <div id="incorrect-data-empty-alert" class="alert alert-danger hidden" role="alert">
       <strong>Некорректные данные!</strong> Таблица пуста или нетабличные данные.
@@ -68,8 +73,10 @@
   </div> <!-- /panel-body -->
 
   <!-- report preview component -->
-  <div id="report-preview">
-    <table id="report-table" class="table"><tr><th data-override="name">Имя</th><th data-override="huge">Махабиги</th><th data-override="big">Биги</th><th data-override="medium">Средние</th><th data-override="small">Малые</th></tr></table>
+  <div class="table-responsive">
+    <div id="report-preview">
+      <table id="report-table" class="table"><tr><th data-override="name">Имя</th><th data-override="huge">Махабиги</th><th data-override="big">Биги</th><th data-override="medium">Средние</th><th data-override="small">Малые</th></tr></table>
+    </div>
   </div>
 
   <!-- report form footer-->
@@ -119,6 +126,8 @@
 
     $('#save').on("click", function () {
       var table = $('#report-table').tableToJSON();
+      console.log(table);
+
       hideAlert($("#save-report-success-alert"));
       hideAlert($("#save-report-error-alert"));
       $("#save").button('loading');
@@ -182,18 +191,28 @@
 
       var text  = (e.originalEvent || e).clipboardData.getData('text/plain');
       //var rows  = text.split("\n");
-      var table = $('<table id="report-table" class="table"><tr><th data-override="name">Имя</th><th data-override="huge">Махабиги</th><th data-override="big">Биги</th><th data-override="medium">Средние</th><th data-override="small">Малые</th></tr>');
+      var table = null
       var data  = processData(text);
+
+      if (data.type == "monthly") {
+        table = $('<table id="report-table" class="table"><tr><th data-override="name">Имя</th><th data-override="huge">Махабиги</th><th data-override="big">Биги</th><th data-override="medium">Средние</th><th data-override="small">Малые</th></tr>');
+      } else if (data.type == "marathon") {
+        table = $('<table id="report-table" class="table"><tr><th data-override="name">Имя</th><th data-override="scores">Очки</th><th data-override="quantity">Книги</th><th data-override="d01">01</th><th data-override="d02">02</th><th data-override="d03">03</th><th data-override="d04">04</th><th data-override="d05">05</th><th data-override="d06">06</th><th data-override="d07">07</th><th data-override="d08">08</th><th data-override="d09">09</th><th data-override="d10">10</th><th data-override="d11">11</th><th data-override="d12">12</th><th data-override="d13">13</th><th data-override="d14">14</th><th data-override="d15">15</th><th data-override="d16">16</th><th data-override="d17">17</th><th data-override="d18">18</th><th data-override="d19">19</th><th data-override="d20">20</th><th data-override="d21">21</th><th data-override="d22">22</th><th data-override="d23">23</th><th data-override="d24">24</th><th data-override="d25">25</th><th data-override="d26">26</th><th data-override="d27">27</th><th data-override="d28">28</th><th data-override="d29">29</th><th data-override="d30">30</th><th data-override="d31">31</th></tr>');
+      } else if (data.type == "full") {
+
+      }
+
+
 
       if (data == -1) {
         showAlert($("#incorrect-data-columns-error-alert"));
       } else if (data == -2) {
         showAlert($("#incorrect-data-empty-alert"));
       } else {
-        for(var datarow in data) {
+        for(var datarow in data.data) {
           var row = $('<tr />');
-          for (var cell in data[datarow]) {
-            row.append('<td>' + data[datarow][cell] + '</td>');
+          for (var cell in data.data[datarow]) {
+            row.append('<td>' + data.data[datarow][cell] + '</td>');
           }
           table.append(row);
         }
@@ -204,14 +223,17 @@
     });
 
     function processData(rawData) {
-      var result = []
+      var result = { data: [] }
       var rows   = rawData.trim().split("\n"); // trim to avoid new line
 
       if (rawData == "" || rows[0] == "") return -2;
 
       for(var cell in rows) {
         var cells = rows[cell].split("\t");
-        result.push(cells);
+        result.data.push(cells);
+        result.type = cells.length == 5  ? "monthly" :
+                      cells.length == 34 ? "marathon" :
+                      cells.length == 39 ? "full" : "unknown"
 
 
         /*for (value in cells) {
@@ -222,7 +244,7 @@
           }
         }*/
 
-        if (cells.length != 5) {
+        if (cells.length != 5 && cells.length != 34 && cells.length != 39) {
           return -1;
         }
       }

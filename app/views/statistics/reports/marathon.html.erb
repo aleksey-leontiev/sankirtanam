@@ -1,0 +1,100 @@
+<%= content_for :meta do %>
+	<title>Отчет за марафон <%=@year%></title>
+	<meta property="og:title" content="Отчет о распространении книг за марафон <%=@year%>"/>
+  <meta property="og:site_name" content="sankirtanam.ru"/>
+  <meta property="og:description" content='Отображает общее количество распространненых книг за марафон <%=@year%>.'/>
+  <meta property="og:image" content="https://sankirtanam-aleksey-leontiev1.c9.io/sankirtanam-logo.png"/>
+<% end %>
+
+<% if @no_data then %>
+<div class="jumbotron">
+  <h1>Отчет за марафон <%=@year%></h1>
+  <p class="lead">
+    Отображает общее количество распространненых за марафон <%=@year%>.
+  </p>
+</div>
+<div class="alert alert-danger" role="alert">За данный период данных нет.</div>
+
+<% else %>
+<div class="jumbotron">
+  <h1>Отчет за марафон <%=@year%></h1>
+  <p class="lead">
+    Отображает общее количество распространненых за марафон <%=@year%>.
+    Было распространено <%= @overall_quantity %> книг.
+  </p>
+</div>
+
+<div class="panel panel-default">
+  <div class="panel-heading">Общее количество распространненых книг по всем локациям за <%=@year%> год</div>
+  <div class="panel-body">
+    <div id="distributors-chart" class="ct-chart ct-double-octave"></div>
+  </div>
+
+  <div class="table-responsive">
+	  <table id="table" class="table">
+  		<tr>
+  		  <th>Имя</th>
+  			<th>Очки</th><th>Книги</th>
+  			<th>01</th><th>02</th><th>03</th><th>04</th><th>05</th><th>06</th><th>07</th>
+  			<th>08</th><th>09</th><th>10</th><th>11</th><th>12</th><th>13</th><th>14</th>
+  			<th>15</th><th>16</th><th>17</th><th>18</th><th>19</th><th>20</th><th>21</th>
+  			<th>22</th><th>23</th><th>24</th><th>25</th><th>26</th><th>27</th><th>28</th>
+  			<th>29</th><th>30</th><th>31</th>
+  		</tr>
+  		<% @persons.each do |row|  %>
+  		  <tr>
+  		    <td>
+  		      <a href="<%=person_link(row[:person][:id], row[:person][:name])%>"><%=row[:person][:name]%></a>
+  		    </td>
+  		    <td><%=row[:quantity][:details][:scores]%></td>
+  		    <td><%=row[:quantity][:details][:quantity]%></td>
+  		    <td><%=row[:quantity][:details][:d01]%></td>
+  		    <td><%=row[:quantity][:details][:d02]%></td>
+  		    <td><%=row[:quantity][:details][:d03]%></td>
+  		    <td><%=row[:quantity][:details][:d04]%></td>
+  		    <td><%=row[:quantity][:details][:d05]%></td>
+  		    <td><%=row[:quantity][:details][:d06]%></td>
+  		    <td><%=row[:quantity][:details][:d07]%></td>
+  		    <td><%=row[:quantity][:details][:d08]%></td>
+  		    <td><%=row[:quantity][:details][:d09]%></td>
+  		    <td><%=row[:quantity][:details][:d10]%></td>
+  		    <td><%=row[:quantity][:details][:d11]%></td>
+  		    <td><%=row[:quantity][:details][:d12]%></td>
+  		    <td><%=row[:quantity][:details][:d13]%></td>
+  		    <td><%=row[:quantity][:details][:d14]%></td>
+  		    <td><%=row[:quantity][:details][:d15]%></td>
+  		    <td><%=row[:quantity][:details][:d16]%></td>
+  		    <td><%=row[:quantity][:details][:d17]%></td>
+  		    <td><%=row[:quantity][:details][:d18]%></td>
+  		    <td><%=row[:quantity][:details][:d19]%></td>
+  		    <td><%=row[:quantity][:details][:d20]%></td>
+  		    <td><%=row[:quantity][:details][:d21]%></td>
+  		    <td><%=row[:quantity][:details][:d22]%></td>
+  		    <td><%=row[:quantity][:details][:d23]%></td>
+  		    <td><%=row[:quantity][:details][:d24]%></td>
+  		    <td><%=row[:quantity][:details][:d25]%></td>
+  		    <td><%=row[:quantity][:details][:d26]%></td>
+  		    <td><%=row[:quantity][:details][:d27]%></td>
+  		    <td><%=row[:quantity][:details][:d28]%></td>
+  		    <td><%=row[:quantity][:details][:d29]%></td>
+  		    <td><%=row[:quantity][:details][:d30]%></td>
+  		    <td><%=row[:quantity][:details][:d31]%></td>
+  		  </tr>
+  		<% end %>
+  	</table>
+  </div>
+
+	<div class="panel-footer">
+    Книг: <%= @overall_quantity %>;
+	</div>
+</div>
+
+<script type="text/javascript">
+  new Chartist.Bar('#distributors-chart', {
+    series: <%=raw [@persons.take(15).map{|o| o[:quantity][:overall]}].to_json%>,
+    labels: <%=raw @persons.take(15).map{|o| o[:person][:name]}.to_json%>
+  });
+</script>
+<% end %>
+
+<%= render "share" %>
