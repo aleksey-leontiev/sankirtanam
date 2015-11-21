@@ -31,7 +31,7 @@ class Statistics::StatisticsQueries
       date:       obj.report.date,
       year:       obj.report.date.year,
       month:      obj.report.date.month,
-      quantity: { overall: obj.huge + obj.big + obj.medium + obj.small,
+      quantity: { overall: (obj.huge || 0) + (obj.big || 0) + (obj.medium || 0) + (obj.small || 0),
                   huge: obj.huge, big: obj.big, medium: obj.medium, small: obj.small },
       location: { name: obj.report.location.name,
                   url:  obj.report.location.url },
