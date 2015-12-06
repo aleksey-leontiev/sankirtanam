@@ -33,7 +33,7 @@ class Statistics::MarathonReportQueries < Statistics::StatisticsQueries
       date:       obj.report.date,
       year:       obj.report.date.year,
       month:      obj.report.date.month,
-      quantity: { overall: calculate(obj.details),
+      quantity: { overall: calculate(obj.details), books: calculate_books(obj.details),
                   huge: obj.huge, big: obj.big, medium: obj.medium, small: obj.small,
                   details: obj.details
       },
@@ -57,7 +57,7 @@ class Statistics::MarathonReportQueries < Statistics::StatisticsQueries
     }.map { |obj| # map to { person, quantity:{ overall, by_year:[{year, quantity}] }
       { person: obj[0],
         quantity: { overall: obj[1].sum{ |l| l[:quantity][:overall] },
-                    details: obj[1][0][:quantity][:details] }
+                    details: obj[1][0][:quantity][:details], books: obj[1][0][:quantity][:books] }
       }
     }.sort_by { |obj| # sort by overall quantity
       obj[:quantity][:overall]
@@ -68,6 +68,15 @@ class Statistics::MarathonReportQueries < Statistics::StatisticsQueries
 
   def calculate(obj)
     if obj.scores && obj.scores != 0 then return obj.scores end
+    if obj.quantity && obj.quantity != 0 then return obj.quantity end
+
+    obj.d01 + obj.d02 + obj.d03 + obj.d04 + obj.d05 + obj.d06 + obj.d07 + obj.d08 +
+    obj.d09 + obj.d10 + obj.d11 + obj.d12 + obj.d13 + obj.d14 + obj.d15 + obj.d16 +
+    obj.d17 + obj.d18 + obj.d19 + obj.d20 + obj.d21 + obj.d22 + obj.d23 + obj.d24 +
+    obj.d25 + obj.d26 + obj.d27 + obj.d28 + obj.d29 + obj.d30 + obj.d31
+  end
+
+  def calculate_books(obj)
     if obj.quantity && obj.quantity != 0 then return obj.quantity end
 
     obj.d01 + obj.d02 + obj.d03 + obj.d04 + obj.d05 + obj.d06 + obj.d07 + obj.d08 +
