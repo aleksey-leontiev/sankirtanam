@@ -33,7 +33,7 @@ class Statistics::MarathonReportQueries < Statistics::StatisticsQueries
       date:       obj.report.date,
       year:       obj.report.date.year,
       month:      obj.report.date.month,
-      quantity: { overall: obj.details.scores || obj.details.quantity,
+      quantity: { overall: calculate(obj.details),
                   huge: obj.huge, big: obj.big, medium: obj.medium, small: obj.small,
                   details: obj.details
       },
@@ -62,5 +62,17 @@ class Statistics::MarathonReportQueries < Statistics::StatisticsQueries
     }.sort_by { |obj| # sort by overall quantity
       obj[:quantity][:overall]
     }.reverse
+  end
+
+  private
+
+  def calculate(obj)
+    if obj.scores && obj.scores != 0 then return obj.scores end
+    if obj.quantity && obj.quantity != 0 then return obj.quantity end
+
+    obj.d01 + obj.d02 + obj.d03 + obj.d04 + obj.d05 + obj.d06 + obj.d07 + obj.d08 +
+    obj.d09 + obj.d10 + obj.d11 + obj.d12 + obj.d13 + obj.d14 + obj.d15 + obj.d16 +
+    obj.d17 + obj.d18 + obj.d19 + obj.d20 + obj.d21 + obj.d22 + obj.d23 + obj.d24 +
+    obj.d25 + obj.d26 + obj.d27 + obj.d28 + obj.d29 + obj.d30 + obj.d31
   end
 end

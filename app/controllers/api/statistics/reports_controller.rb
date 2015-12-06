@@ -48,7 +48,7 @@ class Api::Statistics::ReportsController < ApplicationController
       param_report.each do |row|
         person = Person.where(
           location: location,
-          name: row[1]["name"]).first_or_create
+          name: row[1]["name"] || "?").first_or_create
         record = StatisticRecord.new(
           :person => person,
           :huge   => row[1]["huge"]   || 0,

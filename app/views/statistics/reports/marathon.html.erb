@@ -33,7 +33,7 @@
   <div class="table-responsive">
 	  <table id="table" class="table">
   		<tr>
-  		  <th>Имя</th>
+  		  <th>Имя</th><th>Локация</th>
   			<th>Очки</th><th>Книги</th>
   			<th>01</th><th>02</th><th>03</th><th>04</th><th>05</th><th>06</th><th>07</th>
   			<th>08</th><th>09</th><th>10</th><th>11</th><th>12</th><th>13</th><th>14</th>
@@ -45,6 +45,9 @@
   		  <tr>
   		    <td>
   		      <a href="<%=person_link(row[:person][:id], row[:person][:name])%>"><%=row[:person][:name]%></a>
+  		    </td>
+  		    <td>
+  		      <%=row[:person][:name]%>
   		    </td>
   		    <td><%=row[:quantity][:details][:scores]%></td>
   		    <td><%=row[:quantity][:details][:quantity]%></td>
