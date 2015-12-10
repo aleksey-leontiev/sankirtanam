@@ -70,10 +70,10 @@ class Statistics::MarathonReportQueries < Statistics::StatisticsQueries
     if obj.scores && obj.scores != 0 then return obj.scores end
     if obj.quantity && obj.quantity != 0 then return obj.quantity end
 
-    obj.d01 + obj.d02 + obj.d03 + obj.d04 + obj.d05 + obj.d06 + obj.d07 + obj.d08 +
-    obj.d09 + obj.d10 + obj.d11 + obj.d12 + obj.d13 + obj.d14 + obj.d15 + obj.d16 +
-    obj.d17 + obj.d18 + obj.d19 + obj.d20 + obj.d21 + obj.d22 + obj.d23 + obj.d24 +
-    obj.d25 + obj.d26 + obj.d27 + obj.d28 + obj.d29 + obj.d30 + obj.d31
+    (obj.d01 || 0) + (obj.d02 || 0) + (obj.d03 || 0) + (obj.d04 || 0) + (obj.d05 || 0) + (obj.d06 || 0) + (obj.d07 || 0) + (obj.d08 || 0) +
+    (obj.d09 || 0) + (obj.d10 || 0) + (obj.d11 || 0) + (obj.d12 || 0) + (obj.d13 || 0) + (obj.d14 || 0) + (obj.d15 || 0) + (obj.d16 || 0) +
+    (obj.d17 || 0) + (obj.d18 || 0) + (obj.d19 || 0) + (obj.d20 || 0) + (obj.d21 || 0) + (obj.d22 || 0) + (obj.d23 || 0) + (obj.d24 || 0) +
+    (obj.d25 || 0) + (obj.d26 || 0) + (obj.d27 || 0) + (obj.d28 || 0) + (obj.d29 || 0) + (obj.d30 || 0) + (obj.d31 || 0)
   end
 
   def calculate_books(obj)
