@@ -52,7 +52,7 @@
     <div id="distributors-chart" class="ct-chart ct-double-octave"></div>
   </div>
 
-  <div class="table-responsive">
+  <div id="scroller" class="table-responsive">
 	  <table id="table" class="table">
   		<tr>
   		  <th>Имя</th><th>Локация</th>
@@ -125,24 +125,58 @@
 <%= render "share" %>
 
 <style>
-.table>thead:first-child>tr:first-child>th:first-child
-{
+#scroller {
+    overflow-x: scroll;
+}
+#scroller table {
+    /* just a quick hack to make the table overflow the containing div
+       your method may differ */
+}
+
+#scroller .table.fixedCol {
+    width: auto;
     position: absolute;
-    display: inline-block;
-    background-color:white;
+    /* below styles are specific for borderd Bootstrap tables
+       to remove rounded corners on cloned table */
+    -webkit-border-top-right-radius: 0px;
+    -webkit-border-bottom-right-radius: 0px;
+       -moz-border-radius-topright: 0px;
+       -moz-border-radius-bottomright: 0px;
+            border-top-right-radius: 0px;
+            border-bottom-right-radius: 0px;
 }
-.table> tbody > tr > td:first-child
-{
-    position: absolute;
-    display: inline-block;
-    background-color:white;
-}
-.table>thead:first-child>tr:first-child>th:nth-child(2)
-{
-    padding-left:40px;
-}
-.table> tbody > tr > td:nth-child(2)
-{
-    padding-left:50px !important;
+.table.fixedCol th,
+.table.fixedCol td {
+    /* background is set to white to hide underlaying column
+       of original table */
+    background: white;
 }
 </style>
+
+<script>
+$('#scroller table').each(function(){
+    var table = $(this),
+        fixedCol = table.clone(true),
+        fixedWidth = table.find('th').eq(0).width(),
+        tablePos = table.position();
+
+    // Remove all but the first column from the cloned table
+    fixedCol.find('th').not(':eq(0)').remove();
+    fixedCol.find('tbody tr').each(function(){
+        $(this).find('td').not(':eq(0)').remove();
+    });
+
+    // Set positioning so that cloned table overlays
+    // first column of original table
+    fixedCol.addClass('fixedCol');
+    fixedCol.css({
+        left: tablePos.left,
+        top: tablePos.top
+    });
+
+    // Match column width with that of original table
+    fixedCol.find('th,td').css('width',fixedWidth+'px');
+
+    $('#scroller').append(fixedCol);
+});
+</script>
