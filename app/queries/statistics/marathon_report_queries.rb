@@ -64,6 +64,20 @@ class Statistics::MarathonReportQueries < Statistics::StatisticsQueries
     }.reverse
   end
 
+  def by_location(data)
+    data.group_by { |obj| # group by location
+      obj[:location]
+    }.map { |obj| # map to { location:"", quantity:{ overall, by_year:[{year, quantity}] }
+      { location: obj[0],
+        quantity: { overall: obj[1].sum{ |l| l[:quantity][:overall] },
+                    scores:  obj[1].sum{ |l| l[:quantity][:details][:scores] },
+                    books:   obj[1].sum{ |l| l[:quantity][:books] }
+                  } }
+    }.sort_by { |obj| # sort by overall quantity
+      obj[:quantity][:overall]
+    }.reverse
+  end
+
   private
 
   def calculate(obj)

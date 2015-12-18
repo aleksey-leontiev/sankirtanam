@@ -130,8 +130,9 @@ class Statistics::ReportsController < ApplicationController
     start   = Date.new(@year, 12)
     finish  = Date.new(@year, 12, 31)
 
-    @data    = queries.get_records(start_date: start, end_date: finish)
-    @persons = queries.by_person(@data)
+    @data      = queries.get_records(start_date: start, end_date: finish)
+    @persons   = queries.by_person(@data).take(15)
+    @locations = queries.by_location(@data)
   end
 
   def help

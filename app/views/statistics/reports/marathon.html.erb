@@ -25,7 +25,29 @@
 </div>
 
 <div class="panel panel-default">
-  <div class="panel-heading">Общее количество распространненых книг по всем локациям за <%=@year%> год</div>
+  <div class="panel-heading">Общее количество распространненых книг за марафон <%=@year%> год</div>
+
+  <div class="table-responsive">
+    <table class="table">
+  		<tr>
+  			<th>Локация</th>
+  			<th>Книги</th>
+  			<th>Очки</th>
+  		</tr>
+
+  		<% @locations.each do |row|  %>
+  		  <tr>
+  		    <td><a href="<%=statistics_reports_location_path(row[:location][:url], @year)%>"><%=row[:location][:name]%></a></td>
+  		    <td><%=row[:quantity][:books]%></td>
+  		    <td><%=row[:quantity][:scores]%></td>
+  		  </tr>
+  		<% end %>
+  	</table>
+	</div>
+</div>
+
+<div class="panel panel-default">
+  <div class="panel-heading">Лидеры распространения книг за марафон <%=@year%> год</div>
   <div class="panel-body">
     <div id="distributors-chart" class="ct-chart ct-double-octave"></div>
   </div>
