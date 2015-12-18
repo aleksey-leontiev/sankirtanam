@@ -123,3 +123,26 @@
 <% end %>
 
 <%= render "share" %>
+
+<style>
+.table>thead:first-child>tr:first-child>th:first-child
+{
+    position: absolute;
+    display: inline-block;
+    background-color:white;
+}
+.table> tbody > tr > td:first-child
+{
+    position: absolute;
+    display: inline-block;
+    background-color:white;
+}
+.table>thead:first-child>tr:first-child>th:nth-child(2)
+{
+    padding-left:40px;
+}
+.table> tbody > tr > td:nth-child(2)
+{
+    padding-left:50px !important;
+}
+</style>
