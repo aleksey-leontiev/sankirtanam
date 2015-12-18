@@ -1,8 +1,17 @@
 <%= content_for :meta do %>
-	<title>Годовой отчет о распространении книг по локации "<%=@location.name%>" за <%=@year%> год</title>
+  <% if @select_location %>
+    <title>Годовой отчет о распространении книг по локации за <%=@year%> год</title>
+	<% else %>
+	  <title>Годовой отчет о распространении книг по локации "<%=@location.name%>" за <%=@year%> год</title>
+	<% end %>
 	<meta property="og:title" content="Отчет о распространении книг по локации"/>
   <meta property="og:site_name" content="sankirtanam.ru"/>
-  <meta property="og:description" content='Отображает общее количество распространненых книг по локации "<%=@location.name%>" за <%=@year%> год.'/>
+
+  <% if @select_location %>
+    <meta property="og:description" content='Отображает общее количество распространненых книг по локации за <%=@year%> год.'/>
+  <% else %>
+    <meta property="og:description" content='Отображает общее количество распространненых книг по локации "<%=@location.name%>" за <%=@year%> год.'/>
+  <% end %>
   <meta property="og:image" content="https://sankirtanam-aleksey-leontiev1.c9.io/sankirtanam-logo.png"/>
 <% end %>
 
