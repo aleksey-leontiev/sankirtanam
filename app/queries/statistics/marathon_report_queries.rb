@@ -69,9 +69,9 @@ class Statistics::MarathonReportQueries < Statistics::StatisticsQueries
       obj[:location]
     }.map { |obj| # map to { location:"", quantity:{ overall, by_year:[{year, quantity}] }
       { location: obj[0],
-        quantity: { overall: obj[1].sum{ |l| l[:quantity][:overall] },
-                    scores:  obj[1].sum{ |l| l[:quantity][:details][:scores] },
-                    books:   obj[1].sum{ |l| l[:quantity][:books] }
+        quantity: { overall: obj[1].sum{ |l| l[:quantity][:overall] || 0 },
+                    scores:  obj[1].sum{ |l| l[:quantity][:details][:scores] || 0 },
+                    books:   obj[1].sum{ |l| l[:quantity][:books] || 0 }
                   } }
     }.sort_by { |obj| # sort by overall quantity
       obj[:quantity][:overall]
@@ -81,8 +81,8 @@ class Statistics::MarathonReportQueries < Statistics::StatisticsQueries
   private
 
   def calculate(obj)
-    if obj.scores && obj.scores != 0 then return obj.scores end
-    if obj.quantity && obj.quantity != 0 then return obj.quantity end
+    if obj.scores && obj.scores != 0 then return obj.scores || 0 end
+    if obj.quantity && obj.quantity != 0 then return obj.quantity || 0 end
 
     (obj.d01 || 0) + (obj.d02 || 0) + (obj.d03 || 0) + (obj.d04 || 0) + (obj.d05 || 0) + (obj.d06 || 0) + (obj.d07 || 0) + (obj.d08 || 0) +
     (obj.d09 || 0) + (obj.d10 || 0) + (obj.d11 || 0) + (obj.d12 || 0) + (obj.d13 || 0) + (obj.d14 || 0) + (obj.d15 || 0) + (obj.d16 || 0) +
@@ -91,7 +91,7 @@ class Statistics::MarathonReportQueries < Statistics::StatisticsQueries
   end
 
   def calculate_books(obj)
-    if obj.quantity && obj.quantity != 0 then return obj.quantity end
+    if obj.quantity && obj.quantity != 0 then return obj.quantity || 0 end
 
     (obj.d01 || 0) + (obj.d02 || 0) + (obj.d03 || 0) + (obj.d04 || 0) + (obj.d05 || 0) + (obj.d06 || 0) + (obj.d07 || 0) + (obj.d08 || 0) +
     (obj.d09 || 0) + (obj.d10 || 0) + (obj.d11 || 0) + (obj.d12 || 0) + (obj.d13 || 0) + (obj.d14 || 0) + (obj.d15 || 0) + (obj.d16 || 0) +
