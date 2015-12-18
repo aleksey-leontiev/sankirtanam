@@ -56,9 +56,9 @@ module Statistics::ReportHelper
     name = ActiveSupport::Inflector::transliterate(person_name.downcase)
       .gsub(/ /, "-").gsub(/\./, "").downcase
     if year == nil && month == nil then
-      statistics_reports_personal_path(person_id, name)
+      statistics_reports_personal_path(person_id, name || "???")
     else
-      statistics_reports_personal_month_path(person_id, name, year, month)
+      statistics_reports_personal_month_path(person_id, name || "???", year, month)
     end
   end
 end
