@@ -33,7 +33,7 @@ class Statistics::MarathonReportQueries < Statistics::StatisticsQueries
       date:       obj.report.date,
       year:       obj.report.date.year,
       month:      obj.report.date.month,
-      quantity: { overall: calculate(obj.details), books: calculate_books(obj.details),
+      quantity: { overall: calculate(obj), books: calculate_books(obj),
                   huge: obj.huge, big: obj.big, medium: obj.medium, small: obj.small,
                   details: obj.details
       },
@@ -76,26 +76,5 @@ class Statistics::MarathonReportQueries < Statistics::StatisticsQueries
     }.sort_by { |obj| # sort by overall quantity
       obj[:quantity][:overall]
     }.reverse
-  end
-
-  private
-
-  def calculate(obj)
-    if obj.scores && obj.scores != 0 then return obj.scores || 0 end
-    if obj.quantity && obj.quantity != 0 then return obj.quantity || 0 end
-
-    (obj.d01 || 0) + (obj.d02 || 0) + (obj.d03 || 0) + (obj.d04 || 0) + (obj.d05 || 0) + (obj.d06 || 0) + (obj.d07 || 0) + (obj.d08 || 0) +
-    (obj.d09 || 0) + (obj.d10 || 0) + (obj.d11 || 0) + (obj.d12 || 0) + (obj.d13 || 0) + (obj.d14 || 0) + (obj.d15 || 0) + (obj.d16 || 0) +
-    (obj.d17 || 0) + (obj.d18 || 0) + (obj.d19 || 0) + (obj.d20 || 0) + (obj.d21 || 0) + (obj.d22 || 0) + (obj.d23 || 0) + (obj.d24 || 0) +
-    (obj.d25 || 0) + (obj.d26 || 0) + (obj.d27 || 0) + (obj.d28 || 0) + (obj.d29 || 0) + (obj.d30 || 0) + (obj.d31 || 0)
-  end
-
-  def calculate_books(obj)
-    if obj.quantity && obj.quantity != 0 then return obj.quantity || 0 end
-
-    (obj.d01 || 0) + (obj.d02 || 0) + (obj.d03 || 0) + (obj.d04 || 0) + (obj.d05 || 0) + (obj.d06 || 0) + (obj.d07 || 0) + (obj.d08 || 0) +
-    (obj.d09 || 0) + (obj.d10 || 0) + (obj.d11 || 0) + (obj.d12 || 0) + (obj.d13 || 0) + (obj.d14 || 0) + (obj.d15 || 0) + (obj.d16 || 0) +
-    (obj.d17 || 0) + (obj.d18 || 0) + (obj.d19 || 0) + (obj.d20 || 0) + (obj.d21 || 0) + (obj.d22 || 0) + (obj.d23 || 0) + (obj.d24 || 0) +
-    (obj.d25 || 0) + (obj.d26 || 0) + (obj.d27 || 0) + (obj.d28 || 0) + (obj.d29 || 0) + (obj.d30 || 0) + (obj.d31 || 0)
   end
 end

@@ -1,5 +1,5 @@
 <div class="row">
-  <% [:huge, :big, :medium, :small].each do |key| %>
+  <% [:overall, :huge, :big, :medium, :small].each do |key| %>
     <div class="col-sm-6 col-md-3">
       <div class="thumbnail">
         <div style="width:250px;height:200px;">
@@ -9,9 +9,11 @@
           </h2>
         </div>
         <div class="caption">
-              <% for a in 0..@data[0][:quantity][key].to_f/@data[0][:quantity][:overall].to_f*25 %>
+          <% if @data[0][:quantity][:overall].to_f != 0 %>
+            <% for a in 0..@data[0][:quantity][key].to_f/@data[0][:quantity][:overall].to_f*25 %>
               <span class="glyphicon glyphicon-book" aria-hidden="true"></span>
-              <% end %>
+            <% end %>
+          <% end %>
         </div>
       </div>
     </div>

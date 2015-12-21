@@ -4,9 +4,11 @@ class Statistics::StatisticsQueries
     # general query
     query = StatisticRecord
       .joins{report}
+      .joins{details.outer}
       .includes{person}
       .includes{report}.includes{report.location}
       .includes{person}.includes{person.location}
+      .includes{details}
 
     ## apply filters ##
 
@@ -31,7 +33,7 @@ class Statistics::StatisticsQueries
       date:       obj.report.date,
       year:       obj.report.date.year,
       month:      obj.report.date.month,
-      quantity: { overall: (obj.huge || 0) + (obj.big || 0) + (obj.medium || 0) + (obj.small || 0),
+      quantity: { overall: calculate_books(obj),
                   huge: obj.huge, big: obj.big, medium: obj.medium, small: obj.small },
       location: { name: obj.report.location.name,
                   url:  obj.report.location.url },
@@ -83,6 +85,38 @@ class Statistics::StatisticsQueries
 
   def years(data)
     data.uniq{|x|x[:year]}.map{|x|x[:year]}.sort
+  end
+
+
+  protected
+
+  def calculate(obj)
+    if obj.details != nil then
+      obj = obj.details
+      if obj.scores && obj.scores != 0 then return obj.scores || 0 end
+      if obj.quantity && obj.quantity != 0 then return obj.quantity || 0 end
+
+      (obj.d01 || 0) + (obj.d02 || 0) + (obj.d03 || 0) + (obj.d04 || 0) + (obj.d05 || 0) + (obj.d06 || 0) + (obj.d07 || 0) + (obj.d08 || 0) +
+      (obj.d09 || 0) + (obj.d10 || 0) + (obj.d11 || 0) + (obj.d12 || 0) + (obj.d13 || 0) + (obj.d14 || 0) + (obj.d15 || 0) + (obj.d16 || 0) +
+      (obj.d17 || 0) + (obj.d18 || 0) + (obj.d19 || 0) + (obj.d20 || 0) + (obj.d21 || 0) + (obj.d22 || 0) + (obj.d23 || 0) + (obj.d24 || 0) +
+      (obj.d25 || 0) + (obj.d26 || 0) + (obj.d27 || 0) + (obj.d28 || 0) + (obj.d29 || 0) + (obj.d30 || 0) + (obj.d31 || 0)
+    else
+      (obj.huge || 0) + (obj.big || 0) + (obj.medium || 0) + (obj.small || 0)
+    end
+  end
+
+  def calculate_books(obj)
+    if obj.details != nil then
+      obj = obj.details
+      if obj.quantity && obj.quantity != 0 then return obj.quantity || 0 end
+
+      (obj.d01 || 0) + (obj.d02 || 0) + (obj.d03 || 0) + (obj.d04 || 0) + (obj.d05 || 0) + (obj.d06 || 0) + (obj.d07 || 0) + (obj.d08 || 0) +
+      (obj.d09 || 0) + (obj.d10 || 0) + (obj.d11 || 0) + (obj.d12 || 0) + (obj.d13 || 0) + (obj.d14 || 0) + (obj.d15 || 0) + (obj.d16 || 0) +
+      (obj.d17 || 0) + (obj.d18 || 0) + (obj.d19 || 0) + (obj.d20 || 0) + (obj.d21 || 0) + (obj.d22 || 0) + (obj.d23 || 0) + (obj.d24 || 0) +
+      (obj.d25 || 0) + (obj.d26 || 0) + (obj.d27 || 0) + (obj.d28 || 0) + (obj.d29 || 0) + (obj.d30 || 0) + (obj.d31 || 0)
+    else
+      (obj.huge || 0) + (obj.big || 0) + (obj.medium || 0) + (obj.small || 0)
+    end
   end
 
 end

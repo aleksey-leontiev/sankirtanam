@@ -112,7 +112,7 @@ class Statistics::ReportsController < ApplicationController
       @data      = queries.get_records(person_id: param_id, start_date: start_date, end_date: end_date, order: :date)
       @quantity  = @data.map { |o| o[:quantity][:overall] }.inject(:+)
       @mode      = (@person == nil || @data.length == 0) ? :no_data : :ok
-      @types     = {huge: "Махабиги", big: "Большие", medium: "Средние", small: "Малые"}
+      @types     = {overall: "Книг", huge: "Махабиги", big: "Большие", medium: "Средние", small: "Малые"}
       @date      = "#{param_month}/#{param_year}"
       @huge_view = (param_month != nil) && (param_year != nil)
     else
