@@ -70,7 +70,7 @@ class Statistics::MarathonReportQueries < Statistics::StatisticsQueries
     }.map { |obj| # map to { location:"", quantity:{ overall, by_year:[{year, quantity}] }
       { location: obj[0],
         quantity: { overall: obj[1].sum{ |l| l[:quantity][:overall] || 0 },
-                    scores:  obj[1].sum{ |l| l[:quantity][:details] ? l[:quantity][:details][:scores] : 0 },
+                    scores:  obj[1].sum{ |l| l[:quantity][:details] ? (l[:quantity][:details][:scores] || 0) : 0 },
                     books:   obj[1].sum{ |l| l[:quantity][:books] || 0 }
                   } }
     }.sort_by { |obj| # sort by overall quantity
