@@ -101,7 +101,7 @@ class Statistics::StatisticsQueries
       (obj.d17 || 0) + (obj.d18 || 0) + (obj.d19 || 0) + (obj.d20 || 0) + (obj.d21 || 0) + (obj.d22 || 0) + (obj.d23 || 0) + (obj.d24 || 0) +
       (obj.d25 || 0) + (obj.d26 || 0) + (obj.d27 || 0) + (obj.d28 || 0) + (obj.d29 || 0) + (obj.d30 || 0) + (obj.d31 || 0)
     else
-      (obj.huge || 0) + (obj.big || 0) + (obj.medium || 0) + (obj.small || 0)
+      2*(obj.huge || 0) + (obj.big || 0) + 0.5*(obj.medium || 0) + 0.25*(obj.small || 0)
     end
   end
 

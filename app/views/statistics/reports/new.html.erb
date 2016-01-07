@@ -63,7 +63,7 @@
       <strong>Некорректные данные!</strong> Вставляемая таблица должна содержать определённое количество колонок:
         <ul>
           <li><b>Месячный отчёт:</b> имя, махабиги, биги, средние, малые. Колонки с количеством книг и очков компировать не нужно - они будут подсчитаны автоматически.</li>
-          <li><b>Отчёт на марафон:</b> имя, количество книг, очки, 31 колонка по дням марафона.</li>
+          <li><b>Отчёт на марафон:</b> имя, количество книг, очки, махабиги, биги, средние, малые, 31 колонка по дням марафона.</li>
         </ul>
         <a href="<%=statistics_reports_help_path%>">Прочитать инструкцию</a>
     </div>
@@ -197,9 +197,7 @@
       if (data.type == "monthly") {
         table = $('<table id="report-table" class="table"><tr><th data-override="name">Имя</th><th data-override="huge">Махабиги</th><th data-override="big">Биги</th><th data-override="medium">Средние</th><th data-override="small">Малые</th></tr>');
       } else if (data.type == "marathon") {
-        table = $('<table id="report-table" class="table"><tr><th data-override="name">Имя</th><th data-override="scores">Очки</th><th data-override="quantity">Книги</th><th data-override="d01">01</th><th data-override="d02">02</th><th data-override="d03">03</th><th data-override="d04">04</th><th data-override="d05">05</th><th data-override="d06">06</th><th data-override="d07">07</th><th data-override="d08">08</th><th data-override="d09">09</th><th data-override="d10">10</th><th data-override="d11">11</th><th data-override="d12">12</th><th data-override="d13">13</th><th data-override="d14">14</th><th data-override="d15">15</th><th data-override="d16">16</th><th data-override="d17">17</th><th data-override="d18">18</th><th data-override="d19">19</th><th data-override="d20">20</th><th data-override="d21">21</th><th data-override="d22">22</th><th data-override="d23">23</th><th data-override="d24">24</th><th data-override="d25">25</th><th data-override="d26">26</th><th data-override="d27">27</th><th data-override="d28">28</th><th data-override="d29">29</th><th data-override="d30">30</th><th data-override="d31">31</th></tr>');
-      } else if (data.type == "full") {
-
+        table = $('<table id="report-table" class="table"><tr><th data-override="name">Имя</th><th data-override="scores">Очки</th><th data-override="quantity">Книги</th><th data-override="huge">Махабиги</th><th data-override="big">Биги</th><th data-override="medium">Средние</th><th data-override="small">Малые</th><th data-override="d01">01</th><th data-override="d02">02</th><th data-override="d03">03</th><th data-override="d04">04</th><th data-override="d05">05</th><th data-override="d06">06</th><th data-override="d07">07</th><th data-override="d08">08</th><th data-override="d09">09</th><th data-override="d10">10</th><th data-override="d11">11</th><th data-override="d12">12</th><th data-override="d13">13</th><th data-override="d14">14</th><th data-override="d15">15</th><th data-override="d16">16</th><th data-override="d17">17</th><th data-override="d18">18</th><th data-override="d19">19</th><th data-override="d20">20</th><th data-override="d21">21</th><th data-override="d22">22</th><th data-override="d23">23</th><th data-override="d24">24</th><th data-override="d25">25</th><th data-override="d26">26</th><th data-override="d27">27</th><th data-override="d28">28</th><th data-override="d29">29</th><th data-override="d30">30</th><th data-override="d31">31</th></tr>');
       }
 
 
@@ -232,19 +230,9 @@
         var cells = rows[cell].split("\t");
         result.data.push(cells);
         result.type = cells.length == 5  ? "monthly" :
-                      cells.length == 34 ? "marathon" :
-                      cells.length == 39 ? "full" : "unknown"
+                      cells.length == 38 ? "marathon" : "unknown";
 
-
-        /*for (value in cells) {
-          var isNumeric = $.isNumeric(cells[value]);
-          var isEmpty   = cells[value] == "";
-          if (!isEmpty && !isNumeric && value != 0) {
-            return -3;
-          }
-        }*/
-
-        if (cells.length != 5 && cells.length != 34 && cells.length != 39) {
+        if (cells.length != 5 && cells.length != 38) {
           return -1;
         }
       }
