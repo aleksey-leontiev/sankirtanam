@@ -20,6 +20,8 @@ Rails.application.routes.draw do
     get 'reports/personal/:id-:name' => 'reports#personal', as: :reports_personal
     get 'reports/personal/:id-:name/:year-:month' => 'reports#personal', as: :reports_personal_month
     get 'reports/marathon/:year' => 'reports#marathon', as: :reports_marathon
+    get 'reports/marathon/:year/:month' => 'reports#marathon', as: :reports_marathon_month
+    get 'reports/marathon/:year/:month/:days' => 'reports#marathon', as: :reports_marathon_month_days
     get 'reports/help' => 'reports#help', as: :reports_help
   end
 

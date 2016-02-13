@@ -90,30 +90,46 @@ class Statistics::StatisticsQueries
 
   protected
 
-  def calculate(obj)
+  def calculate(obj, days: 31)
     if obj.details != nil then
       obj = obj.details
       if obj.scores && obj.scores != 0 then return obj.scores || 0 end
-      if obj.quantity && obj.quantity != 0 then return obj.quantity || 0 end
+      if obj.quantity && obj.quantity != 0 && days == 31 then return obj.quantity || 0 end
 
-      (obj.d01 || 0) + (obj.d02 || 0) + (obj.d03 || 0) + (obj.d04 || 0) + (obj.d05 || 0) + (obj.d06 || 0) + (obj.d07 || 0) + (obj.d08 || 0) +
-      (obj.d09 || 0) + (obj.d10 || 0) + (obj.d11 || 0) + (obj.d12 || 0) + (obj.d13 || 0) + (obj.d14 || 0) + (obj.d15 || 0) + (obj.d16 || 0) +
-      (obj.d17 || 0) + (obj.d18 || 0) + (obj.d19 || 0) + (obj.d20 || 0) + (obj.d21 || 0) + (obj.d22 || 0) + (obj.d23 || 0) + (obj.d24 || 0) +
-      (obj.d25 || 0) + (obj.d26 || 0) + (obj.d27 || 0) + (obj.d28 || 0) + (obj.d29 || 0) + (obj.d30 || 0) + (obj.d31 || 0)
+      val = 0
+      obj.attributes.each do |name, value|
+        if name.starts_with?("d") then
+          if name[1,2].to_i <= days+1 then val += (value || 0) end
+        end
+      end
+      val
+
+      #(obj.d01 || 0) + (obj.d02 || 0) + (obj.d03 || 0) + (obj.d04 || 0) + (obj.d05 || 0) + (obj.d06 || 0) + (obj.d07 || 0) + (obj.d08 || 0) +
+      #(obj.d09 || 0) + (obj.d10 || 0) + (obj.d11 || 0) + (obj.d12 || 0) + (obj.d13 || 0) + (obj.d14 || 0) + (obj.d15 || 0) + (obj.d16 || 0) +
+      #(obj.d17 || 0) + (obj.d18 || 0) + (obj.d19 || 0) + (obj.d20 || 0) + (obj.d21 || 0) + (obj.d22 || 0) + (obj.d23 || 0) + (obj.d24 || 0) +
+      #(obj.d25 || 0) + (obj.d26 || 0) + (obj.d27 || 0) + (obj.d28 || 0) + (obj.d29 || 0) + (obj.d30 || 0) + (obj.d31 || 0)
     else
       2*(obj.huge || 0) + (obj.big || 0) + 0.5*(obj.medium || 0) + 0.25*(obj.small || 0)
     end
   end
 
-  def calculate_books(obj)
+  def calculate_books(obj, days: 31)
     if obj.details != nil then
       obj = obj.details
-      if obj.quantity && obj.quantity != 0 then return obj.quantity || 0 end
+      if obj.quantity && obj.quantity != 0 && days == 31 then return obj.quantity || 0 end
 
-      (obj.d01 || 0) + (obj.d02 || 0) + (obj.d03 || 0) + (obj.d04 || 0) + (obj.d05 || 0) + (obj.d06 || 0) + (obj.d07 || 0) + (obj.d08 || 0) +
-      (obj.d09 || 0) + (obj.d10 || 0) + (obj.d11 || 0) + (obj.d12 || 0) + (obj.d13 || 0) + (obj.d14 || 0) + (obj.d15 || 0) + (obj.d16 || 0) +
-      (obj.d17 || 0) + (obj.d18 || 0) + (obj.d19 || 0) + (obj.d20 || 0) + (obj.d21 || 0) + (obj.d22 || 0) + (obj.d23 || 0) + (obj.d24 || 0) +
-      (obj.d25 || 0) + (obj.d26 || 0) + (obj.d27 || 0) + (obj.d28 || 0) + (obj.d29 || 0) + (obj.d30 || 0) + (obj.d31 || 0)
+      val = 0
+      obj.attributes.each do |name, value|
+        if name.starts_with?("d") then
+          if name[1,2].to_i <= days+1 then val += (value || 0) end
+        end
+      end
+      val
+
+      #(obj.d01 || 0) + (obj.d02 || 0) + (obj.d03 || 0) + (obj.d04 || 0) + (obj.d05 || 0) + (obj.d06 || 0) + (obj.d07 || 0) + (obj.d08 || 0) +
+      #(obj.d09 || 0) + (obj.d10 || 0) + (obj.d11 || 0) + (obj.d12 || 0) + (obj.d13 || 0) + (obj.d14 || 0) + (obj.d15 || 0) + (obj.d16 || 0) +
+      #(obj.d17 || 0) + (obj.d18 || 0) + (obj.d19 || 0) + (obj.d20 || 0) + (obj.d21 || 0) + (obj.d22 || 0) + (obj.d23 || 0) + (obj.d24 || 0) +
+      #(obj.d25 || 0) + (obj.d26 || 0) + (obj.d27 || 0) + (obj.d28 || 0) + (obj.d29 || 0) + (obj.d30 || 0) + (obj.d31 || 0)
     else
       (obj.huge || 0) + (obj.big || 0) + (obj.medium || 0) + (obj.small || 0)
     end

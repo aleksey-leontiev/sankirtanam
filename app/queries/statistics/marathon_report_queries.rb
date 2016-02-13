@@ -29,11 +29,13 @@ class Statistics::MarathonReportQueries < Statistics::StatisticsQueries
 
     ## map records ##
 
+    days = (end_date - start_date).to_i
+
     map = query.map { |obj| {
       date:       obj.report.date,
       year:       obj.report.date.year,
       month:      obj.report.date.month,
-      quantity: { overall: calculate(obj), books: calculate_books(obj),
+      quantity: { overall: calculate(obj, days: days), books: calculate_books(obj, days: days),
                   huge: obj.huge, big: obj.big, medium: obj.medium, small: obj.small,
                   details: obj.details
       },

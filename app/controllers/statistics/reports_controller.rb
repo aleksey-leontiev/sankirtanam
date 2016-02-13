@@ -123,12 +123,14 @@ class Statistics::ReportsController < ApplicationController
 
   def marathon
     # get input parameters
-    param_year = params[:year].to_i
+    param_year  = params[:year].to_i
+    param_month = (params[:month] || 12).to_i
+    param_days = (params[:days] || 31).to_i
     @year = param_year.to_i
 
     queries = Statistics::MarathonReportQueries.new
-    start   = Date.new(@year, 12)
-    finish  = Date.new(@year, 12, 31)
+    start   = Date.new(@year, param_month)
+    finish  = Date.new(@year, param_month, param_days)
 
     @data      = queries.get_records(start_date: start, end_date: finish)
     @persons   = queries.by_person(@data).take(15)
